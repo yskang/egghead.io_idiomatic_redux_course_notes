@@ -1,9 +1,9 @@
-# 04. Refactoring the Entry Point
-[Video Link](https://egghead.io/lessons/javascript-redux-refactoring-the-entry-point?series=building-react-applications-with-idiomatic-redux)
+# 04. 진입점 리팩토링
+[비디오 링크](https://egghead.io/lessons/javascript-redux-refactoring-the-entry-point?series=building-react-applications-with-idiomatic-redux)
 
-In this lesson we will extract the logic necessary for creating & subscribing to the store into a separate file.
+이번 강좌에서는 스토어의 생성 및 구독을 위한 로직을 추출해서 새로운 파일로 분리 할 것이다.
 
-#### `index.js` Before
+#### `index.js` 이전
 ```javascript
 import 'babel-polyfill'
 import React from 'react'
@@ -35,9 +35,9 @@ render(
 )
 ```
 
-We will call our new file `configureStore.js`, and start by creating a funcion `configureStore` that will contain the store creation & persistance logic.
+파일을 새로 만들어 이름을 `configureStore.js`로 한 후, 스토어를 생성 및 저장 하는 로직을 담고 있는 함수 `configureStore` 함수를 생성 하는 것 부터 시작한다.
 
-We do this because this way our app doesn't have to know exactly how the store is created and whether or not we have subscribe handlers. It can just use the returned store in the `index.js` file.
+이렇게 하는 이유는 앱이 어떻게 스토어가 생성되고, 핸들러를 구독하는지 여부를 정확하게 알수 없도록 하기 위해서 이다. 앱은 단지 `index.js`로 부터 반환받은 스토어를 사용할 수 있다.
 
 ####`configureStore.js`
 ```javascript
@@ -62,7 +62,7 @@ const configureStore = () => {
 export default configureStore
 ```
 
-By exporting `configureStore` instead of just `store`, we will be able to create as many store instances as we want for testing.
+`store`만이 아닌 `configureStore`를 export 함 으로서, 테스트를 위해 필요한만큼 스토어 인스턴스를 만들 수 있다.
 
 #### `index.js` After
 ```javascript
@@ -79,7 +79,7 @@ render(
 );
 ```
 
-Note that we have also extracted the root rendered element into a separate component called `Root`. It accepts `store` as a prop, and will be defined in a separate file in our `src/components` folder.
+랜더된 root 엘리먼트를 `Root`라고 불리는 분리된 컴포넌트로 추출한 것을 주목해라. 이 컴포넌트는 prop으로 `store`를 받고, `src/components` 폴더에 분리된 파일로 정의 될 것이다.
 
 ---
 
@@ -102,8 +102,8 @@ Root.propTypes = {
 export default Root;
 ```
 
-We've defined a stateless functional component that just takes the `store` as a prop and returns `<App />` inside of `react-redux`'s `Provider`.
+단지 `store`를 prop으로 받고, `react-redux`의 `Provider` 대신 `<App />`을 반환하는 상태없는 함수형 컴포넌트를 정의 했다.
 
-Now inside of `index.js`, we can remove our `Provider` import as well as replacing the `App` component import with our `Root` component import.
+이제 `index.js` 안에서, `Provider`를 import한 것을 지울 수 있고, `App` 컴포넌트를 대신해 `Root` 컴포넌드를 import 할 수 있다.
 
 [Recap at 1:45 in video](https://egghead.io/lessons/javascript-redux-refactoring-the-entry-point?series=building-react-applications-with-idiomatic-redux#/tab-transcript)

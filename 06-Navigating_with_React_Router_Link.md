@@ -1,9 +1,11 @@
-# 06. Navigating with React Router `<Link>`
-[Video Link](https://egghead.io/lessons/javascript-redux-navigating-with-react-router-link?series=building-react-applications-with-idiomatic-redux)
+# 06. 리액트 라우터 사용해서 이동하기 `<Link>`
+[비디오 링크](https://egghead.io/lessons/javascript-redux-navigating-with-react-router-link?series=building-react-applications-with-idiomatic-redux)
 
-In this lesson we will update the "links" that control the visibility filter to behave more like _real_ links. We're going to change it so our browser's "Back" button works, and the URL changes when we switch filters.
+이번 강좌에서는 visiblility 필터를 컨트롤하는 "links"를 업데이트 해서 _진짜_ 링크처럼 동작하도록 할 것이다. 브라우저의 "뒤로가기" 버튼이 동작하게 하고 필터를 번경할 때 URL이 변하도록 할 것 이다.
 
 We'll start by adding a parameter to the Route `path` called `filter`. We wrap it in parens to tell React Router that it's optional (we want all Todos shown by default).
+
+Route 엘리먼트의 `path` 에 `filter`라는 파라메터를 추가 하는 것부터 시작한다. 괄호로 감쌈으로서 리액트 라우터에 선택사항 이라는 것을 알린다 (기본적으로 모든 Todo가 보여지기를 원한다).
 
 #### Update `Root.js`
 ```javascript
@@ -19,8 +21,8 @@ const Root = ({ store }) => (
 .
 ```
 
-### Update Links in `Footer.js`
-We also need to update our visibility filter links inside of the footer.
+### `Footer.js` 에서 Link 업데이트 하기
+footer의 안쪽에 visibility 필터 링크들을 업데이트 할 필요가 있다.
 
 #### `Footer.js` Before
 ```javascript
@@ -46,9 +48,9 @@ const Footer = () => (
 export default Footer;
 ```
 
-The previous implementation used the convention for the `filter` prop, but we will update them to align with the "active" and "completed" paths we want displayed in the address bar.
+이전 구현은 `filter` prop 을 사용했지만, 주소창에 "active"와 "completed"가 표시되는 것을 하기 위해 업데이트 한다.
 
-#### `Footer.js` After
+#### `Footer.js` 이후
 ```javascript
 // Rest as above...
 <p>
@@ -68,12 +70,12 @@ The previous implementation used the convention for the `filter` prop, but we wi
 </p>
 ```
 
-We use a null string to signify the default path and avoid passing an empty string.
+기본 주소를 나타내기 위해 빈 문자열 대신 null 문자열을 사용한다.
 
-### Update `FilterLink.js` Implementation
-In our current implementation, the `FilterLink` component dispatches an action every time that it's clicked, then reads its active state from the store and compares its `filter` prop to the `visibilityFilter` in the store.
+### `FilterLink.js` 구현 업데이트
+현재 구현에서, `FilterLink` 컴포넌트는 클릭 될 때마다 매번번 액션을 발행하고, 스토어에서 상태를 읽어 스토어에 있는 `setVisibilityFilter`의 `filter` prop과 비교한다.
 
-#### `FilterLink.js` Before
+#### `FilterLink.js` 이전
 ```javascript
 ...
 const mapStateToProps = (state, ownProps) => ({
@@ -94,17 +96,18 @@ const FilterLink = connect(
 export default FilterLink;
 ```
 
-However, we no longer need this implementation since we want the router to be in control of any state that is in the URL. We'll import `Link` from `react-router` and use it in our new implementation.
+하지만, 라우터가 URL에 있는 어떤 상태라도 제어 하기를 원하기 때문에 더이상 이 구현은 필요하지 않다. `react-router`로 부터 `Link`를 import 해서 새로운 구현에 사용할 것이다.
 
-`FilterLink` now accepts `filter` as a prop, and render it through React Router's `Link`.
+`FilterLink` 는 이제 `filter`를 prop으로 받고, 리액트 라우터의 `Link`를 이용해 랜더링 한다.
 
-The `to` prop corresponds to path we want the link to point to, so if the `filter` is `'all'`, we're going to use the root path, otherwise we will use `filter` itself as the URL's path.
+`to` prop은 가리키는 지점에 대한 링크의 경로와 일치 하기 때문에, URL의 경로로 만일 `filter`가 `'all'`이면 root 경로를 사용할 것 이고, 그렇지 않으면 `filter` 자체를 사용할 것 이다.
 
-We also will use the `activeStyle` prop to style it differently when its `to` prop matches the current path.
 
-We pass `children` to the `Link` itself, and add `children` as a prop to `FilterLink` so that the parent component can specify the children.
+또한, `to` prop이 현재 경로와 일치할 때, 스타일을 다르게 하기 위해 `activeStyle` prop을 사용할 것이다.
 
-#### `FilterLink.js` After
+`Link` 자신에 `children`을 전달 하고, `children`을 `FilterLink`에 prop으로 추가해서 부모 컴포넌트가 자식을 특정 지을 수 있도록 한다.
+
+#### `FilterLink.js` 이후
 ```javascript
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
@@ -129,9 +132,11 @@ FilterLink.propTypes = {
 export default FilterLink;
 ```
 
-### More Cleanup to Do...
-We are no longer using the `setVisibilityFilter` action creator, so it can be removed from `src/actions/index.js`, leaving us with just `addTodo` and `toggleTodo` action creators.
+### 더 할 것들...
+더이상 `setVisibilityFilter` 액선 생성자를 사용하지 않기 때문에, `src/action/index.js` 에서 제거할 수 있으니, `addTodo`와 `toggleTodo` 액션 생성자만 남겨둔다.
 
 We can also delete our custom `Link` component from `src/components` since we are now using the one provided by `react-router`.
+
+또한, `react-router`에서 제공하는 것을 사용하기 때문에 `src/components`에서 커스텀 `Link` 컴포넌트를 지울 수 있다.
 
 [Recap at 2:20 in video](https://egghead.io/lessons/javascript-redux-navigating-with-react-router-link?series=building-react-applications-with-idiomatic-redux)
