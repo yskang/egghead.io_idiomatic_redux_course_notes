@@ -1,11 +1,11 @@
-# 03. Persisting the State to the Local Storage
-[Video Link](https://egghead.io/lessons/javascript-redux-persisting-the-state-to-the-local-storage)
+# 03. 내부 저장소에 상태 저장 해 놓기
+[비디오 링크](https://egghead.io/lessons/javascript-redux-persisting-the-state-to-the-local-storage)
 
-In this example, we want to be able to persist the state of the application using the browser's `localStorage` API.
+이 예제에서는 브라우저의 `localStorage` API를 이용해 어플리케이션의 상태를 지속시킬 수 있게 해볼 수 있다.
 
-We will write a function called `loadState()` and a new model called `localStorage.js`.
+`loadState()`라 불리는 함수와 `localStorage.js`라 불리는 새로운 모델을 작성한다.
 
-The `loadState` function is going to look into `localStorage` by key, retrieve a string, and try to parse it as JSON. This code needs to be wrapped into a `try/catch` because it's possible that the user's browser disallows usage of the `localStorage` API.
+`loadState` 함수는 키를 이용해 `localStorage`에 들어가서, 스트링을 검색하고, JSON 포멧으로 파싱할 것이다. 이 코드는 사용자의 브라우저가 `localStorage` API의 사용을 불허 할 수 있기 때문에 `try/catch` 로 감쌀 필요가 있다.
 
 ####`localStorage.js`
 ```javascript
@@ -22,11 +22,11 @@ export const loadState = () => {
 };
 ```
 
-In our `loadState` function, if the `serializedState` is `null`, it means that the key doesn't exist, so we return `undefined` which lets the reducers set the state instead.
+`loadState` 함수에서 만일 `serializedState` 가 `null` 이라면 키가 존재하지 않는 것을 의미하기 때문에, 리듀서들이 상태값 대신 설정 하도록 `undefined`를 반환 해야 한다.
 
-However, if the `serializedState` string exists, we'll use `JSON.parse(serializedState)` in order to return it into the `state` object.
+하지만, 만일 `serializedState` 문자열이 존재하면, `state` object로 반환해야 하기 때문에 `JSON.parse(serializedState)`를 사용한다.
 
-Since we have a function for loading state, we should have one for saving state to localStorage:
+상태를 읽기위한 함수를 가지고 있으니까, localStorage에 상태를 하나 저장해 보자:
 
 ```javascript
 export const saveState = (state) => {
@@ -39,19 +39,20 @@ export const saveState = (state) => {
 };
 ```
 
-Our `saveState` function accepts our `state` as an argument, and does the exact opposite thing as our `loadState` function.
+`saveState`함수는 매개변수로서 `state`를 받고, `loadState`함수는 정반대로 동작 한다.
 
-First, we use `JSON.stringify(state)` to serialize our state to a string. This will only work if the state is serializable, but if you're following suggested Redux practices, you'll be good to go.
+우선, `JSON.stringify(state)`를 사용해 상태를 문자열로 직렬화 시킨다. 상태가 직렬화 되어 있는 경우에만 동작하게 되는데, 만일 권장되는 리덕스 사용법을 따른다면 잘 동작할 것 이다.
 
-We catch any errors, since either `JSON.stringify()` or `localStorage.setItem()` can fail.
+`JSON.stringify()` 혹은 `localStorage.setItem()`은 실패 할 수 있는 동작이므로, 에러를 catch해야 한다.
 
-### Using `localStorage.js`
-Back in our `index.js` file, we will import the functions we just wrote:
+
+### `localStorage.js` 사용
+`index.js` 파일로 돌아와서, 방금 작성한 함수들을 import 한다.
 ```javascript
 import { loadState, saveState } from './localStorage'
 ```
 
-In order to save our state any time the store changes, we will use the `store`'s `subscribe()` method to add a listener that will be invoked on any state change, passing in the current state of the store into the `saveState` function:
+저장소가 변경될 때 마다 상태를 저장하기 위해서, 어느 상태의 변화에도 동작해서 `saveState` 함수로 저장소의 현재 상태를 전달하는 리스너를 추가하는데 `store`의 `subscribe()` 메소드를 사용할 것 이다.
 
 ```javascript
 // Inside of index.js ...
@@ -60,9 +61,9 @@ store.subscribe(() => {
 })
 ```
 
-Now we have our state being preserved across reloads. However, it isn't just our complete & incomplete Todo items being tracked, but the visibility filter as well. This isn't ideal, since in most cases we would want to persist just the data and not the UI as well.
+이제 리로드 할 때마다 상태가 저장될 것 이다. 하지만, 이건 완료 및 미완료 Todo 아이템이 추적되는 것 만이 아니다. 대부분의 경우 데이터는 저장하기를 원하지만 UI까지 원하지는 않기 때문에 이렇게 하는 것은 이상적이지 않다.
 
-To fix this, we'll adjust `store.subscribe()`:
+이런 점을 수정하기 위해, `store.subscribe()`를 고칠 것이다.:
 ```javascript
 store.subscribe(() => {
   saveState({
@@ -70,14 +71,14 @@ store.subscribe(() => {
   })
 })
 ```
-Now that we are only saving the `todos` portion of our state, when we refresh the page our `visibilityFilter` will be set to the default of `'SHOW_ALL'` by its reducer.
+이제 상태에서 `todos` 부분만 저장 한다. 페이지를 새로고칠 때, `visibilityFilter`는 리듀서에 의해 기본값인 `'SHOW_ALL'` 이 설정 될 것이다.
 
-### But we have a bug...
-With the way our code is currently written, when we try to add a new Todo item, React will error with `Encountered two children with the same key, 0`.
+### 히지만 버그가 있다...
+이 코드에 작성된 방법으로 새로운 Todo를 추가 하려고 할 때, React는 `Encountered two children with the same key, 0` 라는 에러를 낼 것이다.
 
-This is because in our `TodoList` component we use `todo.id` as our key, which is assigned in the `addTodo` action creator inside of `actions.js`. The `addTodo` action creator uses a local variable `nextTodoId` that is assigned to `0` by default.
+이것은 `actions.js` 파일 안에있는 `addTodo` 액션 생성자에 정의되어 있는 `TodoList` 컴포넌트에 키로 `todo.id`를 사용하고 있기 때문이다. `addTodo` 액션 생성자는 로컬 변수 `nextTodoId`를 사용하며 기본값으로 `0`이 지정된다.
 
-##### `addTodo` Before:
+##### `addTodo` 이전:
 ```javascript
 let nextTodoId = 0
 
@@ -88,13 +89,14 @@ export const addTodo = (text) => ({
 })
 ```
 
-To get around this, we will use an npm module called `node-uuid`:
+이것을 회피하기 위해, `node-uuid` 라는 npm 모듈을 설치한다.:
 
 `$ npm install --save node-uuid`
 
 To use the module, we import `v4` from `node-uuid` and call it instead of `(nextTodoId++)`. _Note: `v4` is just the name of the standard._
+모듈을 사용하기 위해, `node-uuid` 로 부터 `v4`를 import 하고 `(nextTodoId++)` 대신 호출한다. _노트: `v4`는 표준의 이름일 뿐이다._
 
-##### `addTodo` After:
+##### `addTodo` 이후:
 ```javascript
 import { v4 } from 'node-uuid'
 
@@ -104,17 +106,17 @@ export const addTodo = (text) => ({
   text
 })
 ```
-Now all of our Todo items are persisted throughout reloads.
+이제 모든 Todo 아이템들은 리로딩을 해도 보존 된다.
 
 ### Throttling `saveState()`
-We currently call `saveState()` inside the subscribe listener so it is called every time the storage state changes. We want to avoid calling it too often because it uses the expensive `stringify` operation.
+현재 구독하는 리스너의 내부에서 `saveState()`를 호출하기 때문에 저장소 상태가 변경될 때마다 호출 된다. 자원이 많이 소모되는 `stringify` 동작이 사용되기 때문에 너무 잦은 호출은 피하고 싶다.
 
-We will fix this by using another npm module `lodash` that includes a `throttle` utility.
+이 문제를 수정하기 위해 `throttle` 기능이 포함된 `lodash`라는 npm 모듈을 사용할 것이다.
 
 `$ npm install --save lodash`
 
 
-#### `store.subscribe()` Before:
+#### `store.subscribe()` 이전:
 ```javascript
 store.subscribe(() => {
   saveState({
@@ -123,13 +125,14 @@ store.subscribe(() => {
 })
 ```
 
-By wrapping our callback in a `throttle` call, we can insure that the inner function we pass is not going to be called more often than our specified number of milliseconds.
+우리 컬백을 `throttle`로 감싸서, 밀리세컨드 내에 특정 회숫 이상 호출되지 않는 것을 보장 받을 수 있다.
 
 We'll import just `throttle` directly from `lodash`, instead of bringing in the entire library to use a single function.
+한개 함수를 사용하기 위해 전체 라이브러리를 가져오는 대신, `lodash` 로 부터 직접 `throttle`을 import 한다.
 
-#### `store.subscribe()` After:
+#### `store.subscribe()` 이후:
 ```javascript
-// top of index.js
+// index.js 제일 위쪽
 import throttle from 'lodash/throttle'
 .
 .
@@ -141,6 +144,6 @@ store.subscribe(throttle(() => {
 }, 1000))
 ```
 
-Now, even if the store gets updated really fast, we have a guarantee that we only write to `localStorage` once a second at most.
+이제, 저장소가 진짜 빠르게 업데이트 된다 해도, `localStorage`에 적는 건 최대 1초에 한번을 보장 할 수 있다.
 
 #### [Recap at 6:05 in video](https://egghead.io/lessons/javascript-redux-persisting-the-state-to-the-local-storage#/tab-transcript)
