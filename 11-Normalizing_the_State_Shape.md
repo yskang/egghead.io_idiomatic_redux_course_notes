@@ -1,9 +1,10 @@
-# 11. Normalizing the State shape
-[Video Link](https://egghead.io/lessons/javascript-redux-normalizing-the-state-shape)
+# 11. State shape 정규화
+[비디오 링크](https://egghead.io/lessons/javascript-redux-normalizing-the-state-shape)
 
 We currently represent the `todos` in the state tree as an array of `todo` objects. However, in the real app we would probably have more than a single array, and `todos` with the same `id`s in different arrays might get out of sync.
+현재 `todo` 객체들의 배열로서 `totos` 상태 트리가 표현되고 있다. 하지만, 실제 어플리케이션에서는 단순한 배열보다는 많을 것이고, 서로 다른 배열에 있는 같은 `id`를 가진 `todo`는 동기화 되지 않을 것 이다.
 
-#### `todos.js` Before
+#### `todos.js` 이전
 ```javascript
 const todos = (state = [], action) => {
   switch (action.type) {
@@ -22,13 +23,13 @@ const todos = (state = [], action) => {
 };
 ```
 
-### Refactoring `todos.js`
+### `todos.js` 리펙토링
 
-We should treat our state as a database, so we are going to keep `todos` in an object indexed by `id`.
+상태를 데이터베이스 처럼 다루기 때문에, `id`에 의해 색인된 배열안에 `todos`를 보관하게 된다.
 
-We will start by renaming the reducer to `byID`. Now, rather than adding a new item at the end or mapping over every item, we will change the value in the lookup table.
+리듀서를 `byID`로 이름을 바꾸는 것으로 시작한다. 이제, 모든 아이템에 맵핑 하거나 끝에 새로운 아이템을 추가 하는 대신, lookup table에 값을 변경 한다.
 
-Now both `TOGGLE_TODO` and `ADD_TODO` have the same logic. We want to return a new lookup table where the value of `action.id` is going to be the result of calling the reducer on the previous `action.id` value and the `action`.
+이제 `TOGGLE_TODO`와 `ADD_TODO`는 같은 로직을 가지고 있다. `action.id` 값을 가진 새로운 lookup table은 이전에 `action.id` 값의 리듀서를 호출한 결과이며 `action`이 된다.
 
 ```javascript
 const byId = (state = {}, action) => {
@@ -45,24 +46,28 @@ const byId = (state = {}, action) => {
 };
 ```
 
-This is still reducer composition, but with an object instead of an array.
+여전히 리듀서의 결합이지만 배열 대신 객체로 되어 있다.
 
 ---
-**NOTE**:
-We are using the Object Spread operator (`...state`). This is not a part of ES6, so we need to install the `transform-object-rest-spread` Babel plugin, and add it to our `.babelrc` file in order for this to work.
+**노트**:
+
+
+객체 전개 연산자 (`...state`)를 사용하고 있다. 이것은 ES6의 일부가 아어서, `transform-object-rest-spread` Babel plugin을 설치 해야 하며, `.babelrc` 파일에 추가해야 동작 한다.
+
+
 ---
 
-Anytime the `byId` reducer receives an action, it's going to return a copy of its mapping between the `id`s and the actual todos with an updated `todo` for the current action.
+`byId` 리듀서가 액션을 받으면, 현재 액션에 대해 업데이트 된`todo`를 사용하여`id`와 실제 todos 사이의 매핑 복사본을 반환 한다.
 
-Now we'll add another reducer that keeps track of all the added `id`s.
+이제 모든 추가된 `id`들을 추적을 하는 리듀서를 또 추가 한다.
 
-### Adding an `allIds` Reducer
+### `allIds` 리듀서 추가
 
-Now that we keep the todos themselves in the `byId` map, we will have the state of this reducer be an array of `id`s.
+이제 todos를`byId` 맵에 보관하고, 리듀서의 상태를 `id` 배열로 만들 것 이다.
 
-This reducer will switch on the action's type, and the only action I care about is `'ADD_TODO'` because if a new todo is added, we want to return a new array of `id`s with the new `id` as the last item.
+이 리듀서는 액션의 종류에 따라 변경 될 것이고, 만일 새로운 todo가 추가 된다면, 마지막 아이템으로 새로운 `id`를 가지는 `id`들의 새로운 배열을 반환하기를 원하기 때문에 `'ADD_TODO'`만이 신경 써야 하는 액션이다.
 
-For any other actions, we just need to return the current state (which is the current array of `id`s).
+다른 액션들에 대해서는, 현재 상태를 반환하기만 하면 된다(현재 `id`들의 배열).
 
 ```javascript
 const allIds = (state = [], action) => {
@@ -75,7 +80,7 @@ const allIds = (state = [], action) => {
 };
 ```
 
-We still need to export the single reducer from the `todos.js` file, so we use `combineReducers()` again to combine the `byId` and the `allIds` reducers.
+여전히 `todos.js`파일에서 한개의 리듀서를 export 할 필요가 있기 때문에, `byId`와 `allIds`리듀서들을 묶기 위해 `combineReducers()`를 다시 사용한다.
 
 ```javascript
 const todos = combineReducers({
@@ -86,30 +91,30 @@ const todos = combineReducers({
 
 ---
 
-_Note_: You can use combined reducers as many times as you like. You don't have to only use it on the top-level reducer. In fact, it's very common that as your app grows, you'll use `combineReducers` in several places.
+_노트_: 리듀서를 묶는 것은 원하는 만큼 할 수 있다. 최고 레벨 리듀서만 사용할 필요는 없다. 사실, 앱이 커짐에 따라 `combineReducers`를 여러 곳에 사용하게 되는 것이 일반적이다.
 
 ---
 
-### Updating the `getVisibleTodos` Selector
+### `getVisibleTodos` Selector 수정
 
-Now that we have changed the state shape in our reducers, we also need to update the selectors that rely on it.
+이제 리듀서들에 있는 state 모양이 변경 되었고, 매우 연관있는 selectors 역시 변경할 필요가 있다.
 
-The `state` object in `getVisibleTodos` is now going to contain `byId` and `allIds` fields, because it corresponds to the `state` of the combined reducer.
+결함된 리듀서의 `state`와 일치 하기 때문에, 이제 `getVisibleTodos`에 있는`state` 객체가 `byId`와 `allIds`를 포함하게 될 것이다.
 
-Since we don't use an array of todos anymore, we will write a `getAllTodos` selector to create the array for us.
+todos의 객체를 더이상 사용하지 않기 때문에, 배열을 생성하기 위해 `getAllTodos` selector 작성 한다.
 
-`getAllTodos` will take the current `state` and return all `todos` by mapping `allIds` to the `state`'s `byId` lookup table.
+`getAllTodos`는 현재 `state`를 가지고 `allIds`를 `state`의 `byId` lookup table에 매핑함으로서 모든 `todos`를 반환 할 것 이다.
 
-We won't export `getAllTodos` because it will only be used in the current file.
+현재 파일에서만 사용되고 있기 때문에 `getAllTodos`는 export 하지 않는다.
 
 ```javascript
 const getAllTodos = (state) =>
   state.allIds.map(id => state.byId[id]);
 ```
 
-We will use this new selector inside our `getVisibleTodo` selector to obtain an array of todos that can be filtered.
+필터링 될 수 있는 todos의 배열을 얻기 위해 `getVisibleTodo` selector 에 있는 이 새로운 selector를 사용할 것 이다.
 
-`allTodos` is an array of todos just like the components expect, so we can return it from the selector and not worry about changing component code.
+`allTodos` 는 컴포넌트 처럼 todos의 배열일 것 이므로, selector로 부터 반환 할 수 있고 컴포넌트 코드의 변경에 걱정할 필요가 없다.
 
 ```javascript
 export const getVisibleTodos = (state, filter) => {
@@ -127,12 +132,12 @@ export const getVisibleTodos = (state, filter) => {
 };
 ```
 
-### Extracting the `todo` Reducer
+### `todo` 리듀서 추출
 
 
-The `todos.js` file has grown quite a bit, so it's a good time to extract the todo reducer that manages a single todo into a separate file of its own.
+`todos.js` 파일은 살짝 커졌기 때문에, 분리된 파일로 한개의 todo를 관리하는 todo 리듀서를 추출하기 적절한 시점 이다.
 
-We will create a file called `todo.js` in the same `src/reducers` folder, paste in the implementation. Now we can import it into the `todos.js` file.
+`src/reducers` 폴더안에 `todo.js`파일을 생성하고, 구현을 복사해 넣는다. 이제 `todos.js` 파일에 import 한다.
 
 #### `todo.js`
 ```javascript

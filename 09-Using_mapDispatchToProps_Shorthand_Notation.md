@@ -1,9 +1,9 @@
-# 09. Using `mapDispatchToProps()` Shorthand Notation
+# 09. `mapDispatchToProps()` 간결한 형식 사용하기
 [Video Link](https://egghead.io/lessons/javascript-redux-using-mapdispatchtoprops-shorthand-notation)
 
-The `mapDispatchToProps` function lets us inject certain props into the React component that can dispatch actions. For example, the `TodoList` component calls its `onTodoClick` callback prop with the `id` of the `todo`.
+`mapDispatchToProps` 함수는 React 컴포넌트에 어떤 props을 주입 시켜서 액션을 발행 할 수 있게 해준다. 예를 들어, `TodoList` 컴포넌트는 `todo`의 `id`릉 가지고 `onTodoClick` 컬백 prop을 호출한다.
 
-#### Inside `TodoList`
+#### TodoList` 내부
 ```javascript
       <Todo
         key={todo.id}
@@ -12,7 +12,7 @@ The `mapDispatchToProps` function lets us inject certain props into the React co
       />
 ```
 
-Inside `mapDispatchToProps` in our `VisibleTodoList` component we specify that when `onTodoClick()` is called with an `id`, we want to dispatch the `toggleTodo` action with this `id`. The `toggleTodo` action creator uses this `id` to generate an action object that will be dispatched.
+`VisibleTodoList`컴포넌트에 있는 `mapDispatchToProps` 안에 `id`로 `onTodoClick()`이 호출 되면 이 `id`로 `toggoleTodo` 액션이 발행 되도록 정의 해 놓았다. `toggleTodo` 액션 생성자는 이 `id`를 사용해서 발행될 액선 객채를 생성한다.
 
 #### `VisibleTodoList` `mapDispatchToProps`
 ```javascript
@@ -28,13 +28,13 @@ const VisibleTodoList = withRouter(connect(
 )(TodoList));
 ```
 
-When the arguments for the callback prop match the arguments to the action creator exactly, there is a shorter way to specify `mapDispatchToProps`.
+컬백 prop의 인자가 액선 생성자의 인자와 정확하게 일치 할 때, `mapDispatchToProps`를 간결하게 할 방법이 있다.
 
-Rather than pass a function, we can pass an object mapping of the names of the callback props that we want to inject and the action creator functions that create the corresponding actions.
+함수를 전달하는 대신 주입 하려는 컬백 props의 이름과 일치하는 액션을 생성하는 액션 생성자 함수의 객체 매핑을 전달 할 수 있다.
 
-This is a rather common case, so often you don't need to write `mapDispatchToProps`, and you can pass this map in object instead.
+일반적으로 `mapDispatchToProps`를 자주 사용할 필요가 없고, 대신 객체 맵핑을 전달 할 수 있다.
 
-#### `VisibleTodoList` After:
+#### `VisibleTodoList` 이후:
 ```javascript
 const VisibleTodoList = withRouter(connect(
   mapStateToProps,
