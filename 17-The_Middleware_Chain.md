@@ -1,7 +1,7 @@
-# 17. The Middleware Chain
-[Video Link](https://egghead.io/lessons/javascript-redux-the-middleware-chain)
+# 17. 미들웨어 체인
+[비디오 링크](https://egghead.io/lessons/javascript-redux-the-middleware-chain)
 
-In our last lesson, we wrote two functions that wrap the `dispatch` function to add custom behavior. Let's take a closer look at how they work together.
+지난 강좌에서, 일반적이지 않는 행동을 추가하기 위해 `dispatch`함수를 감싸는 두개의 함수를 작성 했다. 그 것들이 같이 어떻게 동작하는지 좀 더 자세히 알아 보자.
 
 ```javascript
 const configureStore = () => {
@@ -17,9 +17,9 @@ const configureStore = () => {
 };
 ```
 
-The final version of the `dispatch` function before returning the `store` is the result of calling `addPromiseSupportToDispatch`.
+`store`를 반환하기 전 `dispatch` 함수의 마지막 버전은 `addPromiseSupportToDispatch`를  호출한 결과다.
 
-#### `addPromiseSupportToDispatch` Before:
+#### `addPromiseSupportToDispatch` 이전:
 ```javascript
 const addPromiseSupportToDispatch = (store) => {
   const rawDispatch = store.dispatch;
@@ -32,18 +32,17 @@ const addPromiseSupportToDispatch = (store) => {
 };
 ```
 
-The function returned by `addPromiseSupportToDispatch` acts like a normal `dispatch` function, but if it gets a Promise it waits for it to resolve, and then passes the result to `rawDispatch` (where `rawDispatch` is the previous value of `store.dispatch`).
+`addPromiseSupportToDispatch`에 의해 반환된 함수는 일반적인 `dispatch`함수 처럼 동작하지만, Promise를 받으면 응답을 받을 때까지 기다리고나서 `rawDispatch`에 결과를 전달 한다 (`rawDispatch`는 `store.dispatch`의 이전 값 이다).
 
-For non-promises, the function calls `rawDispatch` right away. `raw Dispatch` corresponds to store.dispatch at the time `addPromiseSupportToDispatch` was called.
+Promise가 아닌 경우에 대해서, 함수는 바로 `rawDispatch`를 호출한다. `rawDispatch`는 `addPromiseSupportToDispatch`가 호출될 당시의 store.dispatch에 해당된다.
 
+### `dispatch` 리팩토링 - 향상된 함수들
 
-### Refactoring our `dispatch`-enhancing Functions
+`store.dispatch`가 일찍(`configureStore`의 내부)이 다시 할당 되었기 때문에, `addPromiseSupportToDispatch` 내부에서 `rawDispatch`로 참조 하는것은 완전히 공정하지 않다.
 
-Since `store.dispatch` was reassigned earlier (inside of `configureStore`), it's not completely fair to refer to it as `rawDispatch` inside of `addPromiseSupportToDispatch`.
+`rawDispatch`를 `next`로 다시 이름을 지을 것 인데, 이유는 이 함수가 체인에서 다음번 `dispatch` 함수 이기 때문이다.
 
-We'll rename `rawDispatch` to `next`, because this is the next `dispatch` function in the chain.
-
-#### `addPromiseSupportToDispatch` After:
+#### `addPromiseSupportToDispatch` 이후:
 ```javascript
 const addPromiseSupportToDispatch = (store) => {
   const next = store.dispatch;
@@ -56,15 +55,15 @@ const addPromiseSupportToDispatch = (store) => {
 };
 ```
 
-Above, `next` refers to the `store.dispatch` that was returned from `addLoggingToDispatch()`.
+위, `next`는 `addLoggingToDispatch()`로 부터 반환된 `store.dispatch`를 참조 한다.
 
-Recall that our `addLoggingToDispatch()` function also returns a function with the same API as the original `dispatch` function, but it logs the action `type`, the previous `state`, the `action`, and the next `state` along the way.
+`addLoggingToDispatch()` 함수 또한 원본 `dispatch` 함수와 같은 API로 함수를 반환 하지만 액션 `type`, 이전 `state`, 다음 `state`를 기록 한다는 것을 상기 해라.
 
-It calls `rawDispatch` which corresponds to `store.dispatch` at the time that  `addLoggingToDispatch` was called. In this case, this is the `store.dispatch` provided by `createStore()` inside of `configureStore`.
+`addLoggingToDispatch`가 호출될 당시에 `store.dispatch`에 해당하는 `rawDispatch`를 호출 한다. 이경우, 이것은 `configureStore`안에 있는 `createStore()`에 의해 제공되는 `store.dispatch` 다.
 
-However, it is entirely conceivable that we might want to override the `dispatch` function before adding the logging.
+하지만, 로그를 기록 하는 것을 추가 하기 이전에 `dispatch` 함수를 오버라이드 하기 원할 수 있는데 생각해 볼만한 일 이다.
 
-For consistency, we will rename `rawDispatch` to `next` here as well. In this particular case, `next` points to the original `store.dispatch`.
+일관성을 위해, 여기서도 역시 `rawDispatch`를 `next`로 이름을 변경 할 것 이다. 이 특정한 경우에, `next`는 원본 `store.dispatch`를 가르킨다.
 
 #### `addLoggingToDispatch()`
 ```javascript
@@ -88,7 +87,7 @@ const addLoggingToDispatch = (store) => {
 };
 ```
 
-### Introducing Middleware Functions
+### 미들웨어 함수 소개
 
 While this method of extending the store works, it's not really great that we override the public API and replace it with custom functions.
 
