@@ -89,17 +89,17 @@ const addLoggingToDispatch = (store) => {
 
 ### 미들웨어 함수 소개
 
-While this method of extending the store works, it's not really great that we override the public API and replace it with custom functions.
+저장소를 확장하는 이 메소드가 동작하는 동안, 공용 API를 오버라이드 하고 사용자 정의 함수들로 교체 하는 것은 그렇게 좋은 것이 아니다.
 
-To get away from this pattern, we will declare an array of _middleware functions_, which is just a fancy name for the extra-functionality functions we wrote.
+이 패턴을 없애기 위해, 우리가 작성한 추가-기능을 가진 함수들을 위한 멋진 이름인 _미들웨어 함수들_의 배열을 선언 할 것 이다. 
 
-This `middlewares` array will contain functions to be applied later as a single step.
+이 `미들웨어들` 배열은 추후에 단일 단계로 적용되는 함수들을 포함할 것 이다.
 
-We'll push `addLoggingToDispatch` and `addPromiseSupportToDispatch` to the middleware array.
+`addLoggingToDispatch` 와 `addPromiseSupportToDispatch`를 미들웨어 배열에 넣을 것 이다.
 
-Now we create a function `wrapDispatchWithMiddlewares()` that takes the `store` as the first argument, and the array of middlewares as the second.
+이제 첫번째 인자로 `store`를 받고 두번째로 미들웨어의 배열을 받는 `wrapDispatchWithMiddlewares()` 함수를 만든다.
 
-#### Refactoring `configureStore`
+#### `configureStore` 리팩토링
 ```javascript
 const configureStore = () => {
   const store = createStore(todoApp);
@@ -115,9 +115,9 @@ const configureStore = () => {
 };
 ```
 
-Inside of `wrapDispatchWithMiddlewares()` we're going to use `middlewares`'s `forEach` method to run some code for every middleware.
+`wrapDispatchWithMiddlewares()` 안에서 모든 미들웨어를 위한 어떤 코드를 실행 하기 위해 `middlewares`의 `forEach` 메소드를 사용할 것 이다.
 
-Specifically, we will override the `store.dispatch` function to point to the result of calling the middleware with the `store` as an argument.
+특히, `store.dispatch` 함수를 인자로서 `store`를 가지고 미들웨어를 호출하는 것의 결과를 가르키도록 오버라이드 할 것 이다.
 
 ```javascript
 const wrapDispatchWithMiddlewares = (store, middlewares) =>
@@ -126,11 +126,11 @@ const wrapDispatchWithMiddlewares = (store, middlewares) =>
   );
 ```
 
-Recall that inside of our middleware functions themselves, there is a certain pattern that we have to repeat. We grabbing the value of `store.dispatch` and store it in a variable called `next` that we call later.
+미들웨어 함수들 자체의 안을 상기해 보면, 반복하는 어떤 패턴이 있다. `store.dispatch`의 값을 가지고 후에 호출하는 `next`라 불리는 변수안에 저장 한다.
 
-To make it a part of the middleware contract, we can make `next` an outside argument, just like the `store` before it and the `action` after it.
+이것을 미들웨어 규칙의 일부로 만들기 위해, `next`를 바깥 인자로 만들 수 있는데, 이는 이전의 `store`와 이후의 `action`과 같다.
 
-#### Updating `addLoggingToDispatch()`
+#### `addLoggingToDispatch()` 수정
 ```javascript
 const addLoggingToDispatch = (store) => {
   return (next) => {
@@ -153,11 +153,11 @@ const addLoggingToDispatch = (store) => {
 };
 ```
 
-With this change, the middleware becomes a function that returns a function that returns a function.
+이 변화로, 미들웨어는 함수를 반환하는 함수를 반환하는 함수가 된다.
 
-This pattern is called **currying**. This is not very common in JavaScript, but is actually very common in functional programming languages.
+이 패턴은 **커링**이라 불린다. 이것은 자바 스크립트에서 매우 일반적이지 않지만, 함수형 프로그래밍 언어에서는 실제로 매우 일반적 이다.
 
-#### Updating `addPromiseSupportToDispatch`:
+#### `addPromiseSupportToDispatch` 수정:
 ```javascript
 const addPromiseSupportToDispatch = (store) => {
   return (next) => {
@@ -171,11 +171,11 @@ const addPromiseSupportToDispatch = (store) => {
 };
 ```
 
-Again, rather than take the next middleware from the store, we will make it injectable as an argument so that the function that calls the middlewares can choose which middleware to pass.
+다시, 저장소로 부터 다음 미들웨어를 가져오는 것 보다, 인자로서 주입가능하게 만들어서 미들웨어를 호출한 함수가 어떤 미들웨어를 전달할지 결정할수 있게 할 것 이다.
 
-Finally, since `store` is not the only injected argument, we also need to inject the next middleware, which is the previous value of `store.dispatch`.
+마지막으로, `store`는 유일한 주입된 인자가 아니므로, 다음 미들웨어를 주입할 필요가 있는데, `store.dispatch`의 이전값 이다.
 
-#### Updating `wrapDispatchWithMiddlewares`
+#### `wrapDispatchWithMiddlewares` 수정
 ```javascript
 const wrapDispatchWithMiddlewares = (store, middlewares) =>
   middlewares.slice().reverse().forEach(middleware => {
@@ -183,12 +183,11 @@ const wrapDispatchWithMiddlewares = (store, middlewares) =>
   });
 ```
 
-Now that middlewares are a first-class concept, we can rename `addLoggingToDispatch` to just `logger`, and rename `addPromiseSupportToDispatch` to `promise`.
+이제 미들웨어들은 first-class 개념 이므로, `addLoggingToDispatch`를 단지 `logger`로, 그리고 `addPromiseSupportToDispatch`를 `promise`로 이름을 바꿀 수 있다.
 
+### `promise` 미들웨어를 화살표 표기법으로 하기
 
-### Arrow-ifying our `promise` Middleware
-
-The curried style of function declaration can get very hard to read. Luckily we can use arrow functions and rely on the fact that they can have expressions as their bodies.
+커리 스타일의 함수 선언은 읽기가 매우 어려울 수 있다. 다행히도 화살표 표기법을 사용할 수 있어서 함수 본체 자체가 표현식을 가질 수 있다는 사실을 이용할 수 있다.
 
 ```javascript
 // Before
@@ -212,15 +211,15 @@ const promise = (store) => (next) => (action) => {
 }
 ```
 
-It is still a function that returns a function returning a function, but it's much easier to read.
+여전히 함수를 반환하는 함수를 반환하는 함수지만, 읽기는 많이 쉬워 졌다.
 
-The mental model you can use for this is "_this is just a function with several arguments that are applied as they become available_".
+이를 위해 사용할 수 있는 정신적 모델은 "_이것은 단지 사용가능하게 될때 적용되는 몇개의 인자를 가지는 함수 이다._"
 
-### Wrapping up Middlewares
+### 미들웨어들 정리 하기
 
-Our middlewares are currently specified in the order in which the `dispatch` function is overridden, but it would be more natural to specify the order in which the action propagates through the middlewares.
+미들웨어들은 현재 `dispatch` 함수가 오버라이드 되어 있는 순서로 정해져 있지만, 액션이 미들웨어들을 지나 전달 되는 순서로 정하는 것이 좀 더 자연스러울 것 이다.
 
-We will change our middleware declaration to specify them in the order in which the action travels through them:
+미들웨어 선언을 변경하여 액션이 어떤 것을 지나는지에 따른 순서대로 정할 것 이다.
 
 ```javascript
 const configureStore = () => {
@@ -231,7 +230,8 @@ const configureStore = () => {
   .
 ```
 
-We will also `wrapDispatchWithMiddlewares` from right to left by cloning the past array then reversing it.
+또한 `wrapDispatchWithMiddlewares` 오른쪽에서 왼쪽으로 과거 배열을 복제하고 뒤집을 것 이다.
+
 
 ```javascript
 const wrapDispatchWithMiddlewares = (store, middlewares) =>
