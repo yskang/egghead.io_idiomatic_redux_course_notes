@@ -1,13 +1,13 @@
-# 23. Avoiding Race Conditions with Thunks
-[Video Link](https://egghead.io/lessons/javascript-redux-avoiding-race-conditions-with-thunks)
+# 23. Thunks로 경합 조건 피하기
+[비디오 링크](https://egghead.io/lessons/javascript-redux-avoiding-race-conditions-with-thunks)
 
-When we increase the delay in our fake API client to five seconds, we notice a problem. We aren't checking if the tab is already loading before starting a request, and then a bunch of `receiveTodos` actions come back, potentially resulting in a race condition.
+가짜 API에 지연을 5초로 늘렸을 때, 문제를 알게 될 것 이다. 요청을 시작하기 이전에 로딩이 되는지 체크 하지 않고, 한 무리의 `receiveTodos` 액션들이 돌아와서, 경함 조건이 될 가능성이 있게 된다.
 
-To fix this, we can exit early from the `fetchTodos` action creator if we know that we are already fetching the todos for the given filter.
+이 문제를 고치기 위해, 주어진 필터에 대해 todo들을 이미 가져 왔다는 것을 알면 `fetchTodos` 액션 생성자로 부터 일찍 빠져 나갈 수 있다.
 
-Inside of `fetchTodos`, we will add an `if` to check if we are currently fetching by using our `getIsFetching` selector that accepts the store state and the filter as arguments. If it returns `true`, we will exit early from the thunk without dispatching any actions.
+`fetchTodos`의 안에, 인자로 저장소 상태와 필터를 받는 `getIsFetching` 선택자를 이용해서 현재 가져오는 중인지 알아보기 위해 `if`를 추가 할 것 이다. 만일 `true`를 반환하면, 어떤 액션도 발행 하지 않고 thunk로 부터 일찍 빠져 나올 것 이다.
 
-#### Updating `fetchTodos`
+#### `fetchTodos` 수정
 ```javascript
 export const fetchTodos = (filter) => (dispatch) => {
   if (getIsFetching(getState(), filter)) {
@@ -16,17 +16,17 @@ export const fetchTodos = (filter) => (dispatch) => {
   /// rest of fetchTodos
 ```
 
-The `getIsFetching` selector is defined inside the top level reducer file, so we need to import it as a named `import` from `reducers`.
+`getIsFetching` 선택자는 리듀셔 파일의 최고 단계에 정의 되어 있어서, `reducers`로 부터 `import`되어진 것을 import 할 필요가 있다.
 
 ```javascript
 import { getIsFetching } from '../reducers';
 ```
 
-We are also using `getState()` that isn't defined in this file. It belongs to the `store` object, but we don't have access to it directly from the action creator.
+또한 이 파일에 정의 도어 있지 않는 `getState()`를 이용한다. `store` 객체에 소속 되어 있지만, 액션 생성자로 부터 직접 접근 할 필요가 없다.
 
-### Updating the `thunk` Middleware
+### `thunk` 미들웨어 수정
 
-We can make it so that the `thunk` middleware inside `configureStore.js` injects not just the `store.dispatch()` function inside the thunk actions, but also the `store.getState` function. This way, we can grab it as a second argument after `dispatch` inside of the `thunk` action creator.
+`configureStore.js` 안에 있는 `thunk` 미들웨어가 `store.dispatch()` 함수 만을 thunk 액션들 안에 주입 하지 않고 `store.getState` 함수 또한 주입 해서 해결 한다. 이 방법으로, `thunk` 액션 생성자의 내부에 `dispatch` 뒤에 두번째 인자로 잡을 수 있다.
 
 ```javascript
 // Inside configureStore.js
@@ -41,15 +41,15 @@ const thunk = (store) => (next) => (action) =>
 export const fetchTodos = (filter) => (dispatch, getState) => {
 ```
 
-With these changes, the `fetchTodos` action creator dispatches actions conditionally. If we run the app, we can't get it to produce more than three concurrent requests (one for each filter type).
+이런 수정들로, `fetchTodos`액션 생성자는 조건에 따라 액션을 발행 하게 된다. 만일 앱을 실행 시키면, 동시에 새개의 요청들 이상을 생성 하지 못 할 것 이다(각각 필터 타입 마다 한개).
 
-The `isFetching` flag gets reset only when the corresponding `receiveTodos` actions come back, and then we can request the new todos. This is a good way to avoid unnecessary network operations and potential race conditions.
+`isFetching` 플래그는 상응하는 `receiveTodos` 액션들이 돌아올 때만 쉴 수 있고, 새로운 todo들을 요청 할 수 있다. 이것은 불필요한 네트웍 동작을 피하고 있을 지 모르는 경함 상황을 피할 수 있는 좋은 방법이다.
 
-### Updating `fetchTodos`
+### `fetchTodos` 수정
 
-Since the return value of the thunk is a Promise, we will change our early `return` to be a Promise that resolves immediately. We don't have to do this, but it's convenient for the calling code.
+thunk의 반환값은 Promise 이므로, 앞의 `return`은 즉시 응답하는 Promise가 되게 변경 할 것 이다. 이것을 할 필요는 업지만, 코드를 호출 하는데 편하다.
 
-#### Inside `actions/index.js`
+#### `actions/index.js` 내부
 ```javascript
 export const fetchTodos = (filter) => (dispatch, getState) => {
   if (getIsFetching(getState(), filter)) {
@@ -59,8 +59,9 @@ export const fetchTodos = (filter) => (dispatch, getState) => {
 ```
 
 The `thunk` middleware itself does not use this Promise, but it becomes the `return` value of dispatching this action creator, so we can use it inside the component to schedule some code after the asynchronous action has completed.
+`thunk` 미들웨어 자체는 이 Promise를 이용하지 않지만, 이 액션 생성자를 발행하는 것의 반환값 `return`이 되서, 비동기적 액션이 완료된 이후 코드들의 동작의 순서를 정하기 위해 컴포넌트 내에서 이용 할 수 있게 된다.
 
-#### Inside `VisibleTodoList`
+#### `VisibleTodoList` 내부
 ```javascript
 fetchData() {
   const { filter, fetchTodos } = this.props;
@@ -68,13 +69,12 @@ fetchData() {
 }
 ```
 
-### Introducing `redux-thunk`
+### `redux-thunk` 소개
 
-`redux-thunk` is a middleware similar to what we just implemented. To install it, run
+`redux-thunk` 는 방금 구현한 것과 비슷한 미들웨어다. 설치 하려면 다음을 실행 하라.
 
 `npm install --save redux-thunk`.
 
-
-With `redux-thunk` installed, we can remove the version of thunk middleware that we just wrote and import `thunk` from `redux-thunk` instead.
+`redux-thunk`가 설치되면, 방금 작성한 thunk 미드루에어를 제거하고, `redux-thunk`를 `thunk`대신 import 할 수 있다.
 
 [Recap at 2:52 in video](https://egghead.io/lessons/javascript-redux-avoiding-race-conditions-with-thunks)
