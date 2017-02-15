@@ -1,27 +1,27 @@
-# 20. Refactoring the Reducers
-[Video Link](https://egghead.io/lessons/javascript-redux-refactoring-the-reducers)
+# 20. 리듀서 리팩토링
+[비디오 링크](https://egghead.io/lessons/javascript-redux-refactoring-the-reducers)
 
-Earlier, we removed the `visibilityFilter` reducer, and so the root reducer in the app now combines only a single `todos` reducer. Since `index.js` acts effectively as a proxy to the `todos` reducer, we will remove `index.js` completely. Then we will rename `todos.js` to `index.js`, thereby making `todos` the new root reducer.
+앞에서, `visibilityFilter` 리듀서를 제거 해서, 앱에 있는 루트 리듀서는 오직 한개로 합쳐진 `todos` 리듀서만 있게 되었다. `index.js`는 `todos` 리듀서의 프록시로서 효율적으로 동작 하기 때문에, `index.js`은 완전히 없앨 것 이다. 그리고 나서 `todos.js`의 이름을 `index.js`로 변경해서, 새로운 루트 리듀서로 `todos`를 만들 것 이다.
 
-The root reducer file now contains `byId`, `allIds`, `activeIds`, and `completedIDs`. We're going to extract some of them into separate files.
+루트 리듀서 파일은 이제 `byId`, `allIds`, `activeIds`, `completedIDs`를 포함 한다. 이들 중 일부를 추출해서 별도의 파일로 만들 것 이다.
 
-Creating a file called `byid.js`, where we paste the code for the `byId` reducer.
+`byid.js`라는 파일을 생성해서, `byId` 리듀서를 위한 코드를 붙여 넣는다.
 
-Now we'll add a named export for a selector called `getTodo` that takes the `state` and `id`, where the state corresponds to the state of the `byId` reducer. Now going back to `index.js`, we can import the reducer as a default import.
+상태가 `byId`리듀서의 상태와 일치 할 때, `state`와 `id`를 받는 `getTodo`라고 불리는 선택자를 위해 export 하는 것을 추가 할 것 이다. 이제 `index.js`로 돌아가서, 기본 import로 리듀서를 import할 수 있다.
 
-We can also import any associated selectors in a single object with a namespace import:
+네임스페이스 import를 사용해 단일 객체에서 관련된 선택자들중 어떤 것 이라도 import 할 수 있다:
 
 ```javascript
 import byId, * as fromById from './byid'
 ```
 
-Now if we take a look at the reducers managing the IDs, we will notice that their code is almost exactly the same except for the filter value which they compare `action.filter` to.
+이제 ID들을 관리하는 리듀서들을 본면, 코드는 `action.filter`와 필터 값을 피교하는 것만 빼면 거의 정확히 일치 하는 것을 볼 수 있다.
 
-### Creating `createList`
+### `createList` 생성하기
 
-Let's create a new function called `createList` that takes `filter` as an argument.
+`filter`를 인자로 하는 `createList`라 불리는 새로운 함수를 만들자.
 
-`createList` will return another function– a reducer that handles the `id`s for the specified filter– , so its state shape is an array. To save time, we can copy & paste the implementation from `allIds`, and then just change the `'all`` literal to `createList`'s `filter` argument, so that we can create it for any filter.
+`createList`는 다른 함수 - 특정한 필터를 위한 `id`들을 다루는 리듀서 -를 반환할 것 이기 때문에, 상태의 모습은 배열이다.  시간을 절약하기 위해, `allIds`로 부터 구현을 복사해 와서 붙여 넣을 수 있고, 단지 `'all'` 을 `createList`의 `filter` 인자로 바꾸기만 하면되므로, 어떤 필터에 대해서도 만들 수 있다.
 
 ```javascript
 const createList = (filter) => {
@@ -39,21 +39,21 @@ const createList = (filter) => {
 };
 ```
 
-Now we can remove the `allIds`, `activeIds`, and `completedIds` reducer code completely. Instead, we will generate the reducers using the new `createList` function, and pass the filter as an argument to it.
+이제 `allIds`, `activeIds`, `completedIds`리듀서 코드를 완전히 제거 할 수 있다. 대신, 새로운 `createList` 함수를 이용해 리듀서들을 생성 할 것 이며, 인자로 필터를 넘길 것 이다.
 
-Next, extract the `createList` function into a separate file called `createList.js`.
+다음으로, `createList` 함수를 추출해서 `createList.js` 라는 파일을 새로 만들어서 집어 넣는다.
 
-Now that it's in a separate file, we will add a public API for accessing the state in form of a selector. For now, we will call it `getIds`, and will just returns the state of the list (we may change this in the future).
+이제 별도의 파일안에 존재 하게 되서, 선택자의 형태에 구성에 있는 상태에 접근하는 공개 API를 추가 할 것 이다. 이제 부터, 이것을 `getIds`라고 부를 것 이고, 단지 리스트의 상태를 반환 할 것 이다(나중에 이것을 바꿀 수 있다).
 
-#### Finishing Up
+#### 마무리 하기
 
-Back in `index.js`, we will import `createList` and any named selectors from this file.
+`index.js`로 돌아와서, 이 파일로 부터 `createList`와 어떤 이름을 가진 선택자도 import 할 것 이다.
 
 ```javascript
 import createList, * as fromList from './createList';
 ```
 
-We will also rename `idsByFilter` to `listByFilter` because now that the list implementation is in a separate file, we will use the `getIds` selector that it exports.
+또한, `idsByFilter`를 `listByFilter`로 이름을 바꿀 것인데 이유는 이제 리스트 구현은 별도의 파일에 있기 때문이며, `listByFilter`가 export 하는 `getIds` 선택자를 사용할 것이다.
 
 ```javascript
 export const getVisibleTodos = (state, filter) => {
@@ -62,8 +62,8 @@ export const getVisibleTodos = (state, filter) => {
 };
 ```
 
-Since we also moved the `byId` reducer into a separate file, we want to make sure we don't make an assumption that it's just a lookup table. With this in mind, we will use the `fromById.getTodo` selector that it exports and pass its state and the corresponding ID.
+`byId` 리듀서를 별도의 파일로 옮겼기 때문에, 그것이 단지 lookup 테이블이라는 가정을 하지 않는 것을 확신하고 싶다. 지점을 마음에 두고, 상태를 export하고 해당하는 ID를 전달하는 `fromById.getTodo` 선택자를 사용할 것 이다.
 
-With this refactor, we can change the state shape of any reducer in the future without rippling changes across the codebase.
+이 리팩토링으로, 코드기반 전반적으로 추가적인 변화 없이 앞으로 어던 리듀서의 상태 모양도 변결 할 수 있다.
 
 [Recap at 3:41 in video](https://egghead.io/lessons/javascript-redux-refactoring-the-reducers)

@@ -1,10 +1,10 @@
-# 19. Updating the State with the Fetched Data
-[Video Link](https://egghead.io/lessons/javascript-redux-updating-the-state-with-the-fetched-data#/tab-transcript)
+# 19. 가져온 데이터로 상태 갱신 하기
+[비디오 링크](https://egghead.io/lessons/javascript-redux-updating-the-state-with-the-fetched-data#/tab-transcript)
 
 
-In the current implementation of `getVisibleTodos` inside of `todos.js`, we keep all todos in memory. We have an array of all `id`s ever and we get the array of todos that we can filter according to the filter passed from React Router.
+`todos.js`내부에서 `getVisibleTodos`의 현재 구현에서, 메모리에 모든 todos를 저장한다. 모든 `id`의 배열을 가지고 있고 React Router로 부터 전달된 필터에 따라 필터링 할 수 있는 todos의 배열을 얻는다.
 
-#### Current `getVisibleTodos`
+#### 현재 `getVisibleTodos`
 ```javascript
 export const getVisibleTodos = (state, filter) => {
   const allTodos = getAllTodos(state);
@@ -21,17 +21,17 @@ export const getVisibleTodos = (state, filter) => {
 };
 ```
 
-However, this only works correctly if all the data from the server is already available in the client, which is usually not the case with applications that fetch something. If we have thousands of todos on the server, it would be impractical to fetch them all and filter them on the client.
+하지만, 이것은 모든 서버로 부터온 모든 데이터가 클라이언트에 이미 사용가능 해야만 정상적으로 동작 하며, 무언가 가져오는 어플리케이션에서 주로 사용되는 방식은 아니다. 만일 서버에 몇천개의 todos가 있는 경우, 클라이언트에 모두 가져와서 필터링 하는 것은 실용적이지 않을 것 이다.
 
-### Refactoring `getVisibleTodos`
+### `getVisibleTodos` 리팩토링
 
-Rather than keep one big list of `id`s, we'll keep a list of `id`s for every filter's tab so that they can be stored separately and filled according to the actions with the fetched data.
+`id`들의 커다란 리스트를 한개 유지 하는 대신, 모든 필터의 탭별로 `id`들의 리스트를 나눠져서 저장되서 유지될 수 있게 하고 가져온 데이터의 액션에 따라 채워지게 할 것 이다..
 
-We'll remove the `getAllTodos` selector because we won't have access to `allTodos`. We also don't need to filter on the client anymore because we will use the list of todos provided by the server. This means we can remove our `switch` statement from the current implementation.
+`allTodos`에 접근할 필요가 없기 때문에 `getAllTodos` 선택자를 제거 할 것 이다. 또한 서버에 의해 제공되는 todo들의 리스트를 사용하기 때문에 클라이언트에 있는 필터를 더이상 필요치 않는다. 이 말은 현재 구현에서 `switch` 문을 제거 할 수 있다는 뜻 이다.
 
-Instead of reading from `state.allIds`, we will read the IDs from `state.IdsByFilter[filter]`. Then we will map the `id`s to the `state.ById` lookup table to get the actual todos.
+`state.allIds`로 부터 읽는 대신, `state.IdsByFilter[filter]`로 부터 ID들을 읽을 것 이다. 그러고나서 진짜 todo들을 얻어 오기 위해 `id`들을 `state.ById` lookup 테이블에 매핑 시킬 것 이다.
 
-#### Updated `getVisibleTodos`
+#### 수정된 `getVisibleTodos`
 ```javascript
 export const getVisibleTodos = (state, filter) => {
   const ids = state.idsByFilter[filter];
@@ -39,11 +39,11 @@ export const getVisibleTodos = (state, filter) => {
 };
 ```
 
-### Refactoring `todos`
+### `todos` 리팩토링
 
-The selector now expects `idsByFilter` and `byId` to be part of the combined `state` of the `todos` reducer.
+선택자는 `todos` 리듀서의 결합된 `state`의 일부분이 되기 위해 이제 `idsByFilter`와 `byId`를 기대 한다.
 
-#### `todos` Reducer Before:
+#### `todos` 리듀서 이전:
 ```javascript
 const todos = combineReducers({
   byId,
@@ -53,7 +53,7 @@ const todos = combineReducers({
 
 The `todos` reducer used to combine the lookup table and a list of `allIds`. Now, though, we'll replace the lis of `allIds` with the list of `idsByFilter`, which will be a new combined reducer.
 
-#### `todos` Reducer After:
+#### `todos` 리듀서 이후:
 ```javascript
 const todos = combineReducers({
   byId,
@@ -61,9 +61,9 @@ const todos = combineReducers({
 });
 ```
 
-### Creating `idsByFilter`
+### `idsByFilter` 생성하기
 
-`idsByFilter` combines a separate list of `id`s for every filter. So it's `allIds` for the `all` filter, `activeIds` for the `active` filter, and `completedIDs` for the `completed` filter.
+`idsByFilter`는 모든 필터들을 위한 `id`들의 분리된 리스트를 합친다. 그래서, `all`필터를 위해서는 `allIds`, `active` 필터를 위해서는 `activeIds`, `completed` 필터를 위해서는 `completedIDs`가 된다.
 
 ```javascript
 const idsByFilter = combineReducers({
@@ -73,13 +73,11 @@ const idsByFilter = combineReducers({
 });
 ```
 
-### Updating the `allIds` Reducer
+### `allIds` 리듀서 수정
 
-The original `allIDs` reducer managed an array of IDs and the `ADD_TODO` action.
+원래 `allIDs` 리듀서는 ID들의 배열과 `ADD_TODO`액션을 관리 했다. 이제 이런 책임을 없앨 것 인데, 왜냐하면 이제 서버로 부터 가져오는 데이터에 응답하도록 알려주기를 원하기 때문이다.
 
-We are going to take this responsibility away for now, because for now we want to teach it to respond to the data fetched from the server.
-
-#### `allIds` Before:
+#### `allIds` 이전:
 ```javascript
 const allIds = (state = [], action) => {
   switch (action.type) {
@@ -91,9 +89,9 @@ const allIds = (state = [], action) => {
 };
 ```
 
-We'll start by renaming `ADD_TODO` to `RECEIVE_TODOS`. In order to handle the `RECEIVE_TODOS` action, we want to return a new array of todos that we'll get from the server response. We'll map this new array of todos to a function that just selects an `id` from the `todo`. Recall that we decided to keep all IDs separate from active IDs and completed IDs, so they are fetched completely independently.
+`ADD_TODO`를 `RECEIVE_TODOS`로 이름을 변경하는 것부터 시작 할 것이다. `RECEIVE_TODOS` 액션을 다루기 때문에, 서버 응답으로 부터 가져오는 todos의 새로운 배열을 반환하기를 원하다. 단지 `todo`로 부터 `id`를 선택 하는 함수로 이 새로운 todo들의 배열을 매핑 할 것 이다. 모든 ID들, active ID들, completed ID들을 분리해서 저장하기로 정한 것을 상기 해서, 완전히 독립적으로 가뎌오게 할 것 이다.
 
-#### `allIds` After:
+#### `allIds` 이후:
 ```javascript
 const allIds = (state = [], action) => {
   switch (action.type) {
@@ -105,9 +103,9 @@ const allIds = (state = [], action) => {
 };
 ```
 
-#### Creating the `activeIds` Reducer
+#### `activeIds` 리듀서 생성하기
 
-Our `activeIds` reducer will also keep track of an array of `id`s, but only for `todos` on the active tab. We will need to handle the `RECEIVE_TODOS` action in exactly the same way as the `allIds` reducer before it.
+또한 `activeIds` 리듀서는 `id`들의 배열을 계속 추적할 것 이지만, 이것은 오직 active 탭에 있는 `todos`를 위해서 이다. 이전에 `allIds` 리듀서와 정확히 같은 방법으로 `RECEIVE_TODOS`를 다루기를 원할 것 이다.
 
 ```javascript
 const activeIds = (state = [], action) => {
@@ -120,15 +118,15 @@ const activeIds = (state = [], action) => {
 };
 ```
 
-### Updating the Correct Array
+### 정확한 배열 수정 하기
 
-Both `activeIds` and `allIds` need to return a new `state` when the `RECEIVE_TODOS` action fires, but we need to have a way of telling which `id` array we should update.
+`RECEIVE_TODOS` 액션이 오면, `activeIds` 와 `allIds` 둘 다 새로운 `state`를 반환 해야 하지만, 업데이트 해야 하는 `id` 배열을 알려줄 방법이 필요하다.
 
-If you recall the `RECEIVE_TODOS` action, you might remember that we passed the `filter` as part of the action. This lets us compare the `filter` inside the action with a `filter` corresponding to the reducer.
+만일 `RECEIVE_TODOS` 액션을 상기 한다면, 액션의 일부로서 `filter`를 전달 했다는 것을 기억 할 지도 모르겠다. 이것은 리듀서에 상응하는 `filter`와 액션 내부의 `fitler`를 비교 하게 해준다.
 
-The `allIds` reducer is only interested in the actions with the `all` filter, and the `activeIds` is only interested in the `active` filter.
+모든 `allIds` 리듀셔는 단지 `all` 필터를 가진 액션에만 관심이 있고, `activeIds`는 오직 `active` 필터에만 관심이 있다.
 
-#### `activeIds` Reducer
+#### `activeIds` 리듀서
 ```javascript
 const activeIds = (state = [], action) => {
   if (action.filter !== 'active') {
@@ -136,11 +134,10 @@ const activeIds = (state = [], action) => {
   }
   // rest of code as above
 ```
-_Repeat for `allIds` but remember to replace `active` with `all`_
+_`allIds`를 위해 반복 하지만 `active`를 `all`로 대체 하는 것을 기억 하라_
 
-
-### Creating the `completedIds` Reducer
-This reducer is the same as our other filter reducers, but for the `complete` filter.
+### `completedIds` 리듀서 생성하기
+이 리듀서는 다른 필터 리듀서들과 동일 하지만, `compltet` 필터에만 해당 된다.
 
 ```javascript
 const completedIds = (state = [], action) => {
@@ -156,11 +153,11 @@ const completedIds = (state = [], action) => {
 };
 ```
 
-### Updating the `byId` Reducer
+### `byId` 리듀서 업데이트 하기
 
-Now that we have reducers that managing the `id`s, we need to update the `byId` reducer to actually handle the new `todos` from the response.
+이제 `id`들을 고나리하는 리듀서들을 가지고 있는데, 응답으로 부터 새로운 `todos`를 진짜로 다루기 위해 `byId`리듀서를 업데이트 해야 한다.
 
-#### `byId` Before:
+#### `byId` 이전:
 ```javascript
 const byId = (state = {}, action) => {
   switch (action.type) {
@@ -176,13 +173,13 @@ const byId = (state = {}, action) => {
 };
 ```
 
-We can start by removing the existing `case`s because the data does not live locally anymore. Instead, we will handle the `RECEIVE_TODOS` action just in the other reducers.
+존재하는 `cose`를 제거 하는 것으로 시작할 수 있는데 이유는 더이상 데이터가 지역적으로 존재하지 않기 때문이다. 대신, 다른 리듀서에서만 `RECEIVE_TODOS` 액선을 다룰 것 이다.
 
-Then we'll create `nextState`, a shallow copy of the `state` object which corresponds to the lookup table. We want to iterate through every `todo` object in the `response` and put it into our `nextState`.
+그리고 나서 `nextState`를 생성 할 것인데, lookup 테이블에 상응하는 `state` 객체의 얕은 복사본이다. `response`에 있는 모든 `todo`객체를 거쳐 반복하고 `nextState`에 집어 넣기를 원한다.
 
-We'll replace whatever is in `nextState`'s entry for `todo.id` with the new `todo` we just fetched.
+`nextState`의 `todo.id` 항목을 방금 가져온 새로운 `todo`로 변경 할 것이다.
 
-Finally, we'll return the next version of the lookup table from our reducer.
+마지막으로, 리듀서로 부터 lookup 테이블의 다음 버젼을 반환 할 것이다.
 
 #### `byId` After:
 ```javascript
@@ -200,10 +197,10 @@ const byId = (state = {}, action) => {
 };
 ```
 
-**Note:** Normally the assignment operation is a mutation. However, in this case it's fine because `nextState` is a shallow copy, and we're only assigning one level deep. Our function stays pure because we're not modifying any of the original state objects.
+**노트:** 보통은 할당 동작은 mutation 이다. 하지만, 이 경우에는 괜찮은데 이유는 `nextState` 는 얕은 복시이기 때문이며, 한 단계 깊에 할할 뿐이다. 함수는 pure 하게 남아야 하는데 이유는 어떤 원래 상태 객체도 변경 하지 않기 때문이다.
 
-### Finishing Up
+### 마무리 하기
 
-As the last step, we can remove the import of `todo.js` as well as the file itself from our project, because the logic for adding and toggling todos will be implemented as API calls to the server in the future lessons.
+마지막 단계로, 프로젝트에서 `todo.js`를 import 한 부분과 파일 자체도 제거 할 수 있는데, 이는 todo들을 추가 하고 토글하는 로직이 추후 강좌에서 서버에 요청하는 API로 구현될 것이기 때문이다.
 
 [Recap at 5:22 in video](https://egghead.io/lessons/javascript-redux-updating-the-state-with-the-fetched-data)
