@@ -90,15 +90,16 @@ const isFetching = (state = false, action) => {
   };
 ```
 
-With these changes, the loading indicator won't get stuck because a corresponding failure action fires, resetting `isFetching` back to `false`.
+이 변경으로, 실패 액션이 발생하면, `isFetching`이 `false`로 다시 세팅되기 때문에 로딩 인디케이터는 더이상 이상 동작을 하지 않는다.
 
-### Displaying the Error
+### 에러 표시 하기
 
-We'll create a new file `FetchError.js` in our `components` directory.
+`components` 디렉토리에 `FetchError.js`파일을 새로 만들 것 이다.
 
-After `import`ing `React`, we'll create a new functional stateless component `FetchError` that will take two props: a `message` string, and an `onRetry` function. This component will be the default export for this file.
 
-The rendered `<div>` will contain an error saying that something bad happened (including the message that is passed in the props), and a button that when clicked will invoke the `onRetry` callback prop so that the user can retry fetching the data.
+`React`를 `import`한 후, 문자열 `message` 와 함수 `onRetry` 두개의 인자를 가지는 새로운 함수형 상태 없는 컴포넌트 `FetchError`를 만든다. 이 컴포넌트는 이 파일의 기본 export 가 될 것 이다.
+
+랜더된 `<div>`는 무언가 안좋은 일이 벌어졌다는 에러와(props에 전달된 메세지를 포함하는), 클릭 했을 때 `onRetry` 컬백 prop을 실행시키켜서 사용자가 데이터를 다시 가져오게 할 수 있는 버튼을 포함 할 것 이다.
 
 ##### `FetchError` Component
 ```javascript

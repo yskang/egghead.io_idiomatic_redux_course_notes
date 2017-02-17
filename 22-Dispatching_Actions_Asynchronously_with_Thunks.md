@@ -1,7 +1,7 @@
 # 22. Thunks를 사용해 비동기적으로 액션 발행하기
 [비디오 링크](https://egghead.io/lessons/javascript-redux-dispatching-actions-asynchronously-with-thunks)
 
-현재 구현에서 로딩 인디케이터를 보여주기 위해, `fetchTodos`로 todo들을 가져오기 이전에 `requestTodos` 액션을 발행 한다. 별도로 분리해서 호출 하기 원지 않으므로 todo들을 가져올 때 자동으로 `requestTodos` 발행을 한다면 매우 좋을 것 이다.
+현재 구현에서 로딩 인디케이터를 보여주기 위해, `fetchTodos` 액션을 발행 해서 todo들을 가져오기 이전에 `requestTodos` 액션을 발행 한다. 따로따로 호출 하기 원지 않으므로 todo들을 가져올 때 자동으로 `requestTodos` 발행을 한다면 매우 좋을 것 이다.
 
 #### `VisibleTodoList.js` 이전
 ```javascript
