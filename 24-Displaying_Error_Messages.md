@@ -1,7 +1,7 @@
 # 24. 에러 메세지 표시 하기
 [비디오 링크](https://egghead.io/lessons/javascript-redux-displaying-error-messages)
 
-때때로 API 요청이 실패 하는데, 가짜 API 클라이언트 내부에 `throw`ing 해서 거부된 Promise를 반환 하게 하는 것으로 이것을 시뮬레이트 할 것 이다. 만일 앱을 실행 시키면, 로딩 인디케이터는 `isFetching` 플래그가 `true`로 세팅 되지만, 그에 해당하는 `receiveTodos` 액션이 없어서 다시 `false`로 돌아 가기 때문에 동작에 문제가 생긴다.
+때때로 API 요청이 실패 하는데, 가짜 API 클라이언트 내부에 `throw`ing 해서 거부된 Promise를 반환 하게 하는 것으로 이것을 시뮬레이트 할 것 이다. 만일 앱을 실행 시키면, 로딩 인디케이터는 `isFetching` 플래그가 `true`로 세팅 되지만, 그에 해당하는 `receiveTodos` 액션이 없어서 다시 `false`로 돌아 가지 못하기 때문에 동작에 문제가 생긴다.
 
 ### 수정
 
