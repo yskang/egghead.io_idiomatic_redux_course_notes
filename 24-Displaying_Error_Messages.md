@@ -28,7 +28,7 @@ return api.fetchTodos(filter).then(
 ### 명확하게 하기 위해 액션들 이름 바꾸기
 
 `fetchTodos` 액션 생성자가 몇개의 액션들을 발행 하기 때문에, 좀 더 일관되게 이름을 바꿀 것 이다:
-  * `'RECEIVE_TODOS'`는 `'FETCH_TODOS_REQUEST'`로, todo들을 요청 한다는 의미로
+  * `'REQUEST_TODOS'`는 `'FETCH_TODOS_REQUEST'`로, todo들을 요청 한다는 의미로
   * `'RECEIVE_TODOS'` 는 `'FETCH_TODOS_SUCCESS'`로, todo들을 성공적으로 가조 왔다는 의미로
   * `error` 핸들러 `'FETCH_TODOS_FAILURE'` 추가, todo들을 가져오는데 실패 했을 때 사용하기 위해
 
