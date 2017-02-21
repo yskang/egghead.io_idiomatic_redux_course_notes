@@ -7,7 +7,7 @@
 
 액션 생성자 파일(`actions/index.js`) 내부를 일부 깨끗하게 하는 것으로 시작을 할 것 이다.
 
-`requestTodos` 액션은 `fetchTodos` 외부에서 전혀 사용되지 않기 때문에, 그 안에 `requestTodos` 객체 리터럴을 그 안에 내장 시킬 수 있다. `receiveTodos`가 발행된 곳에서 `fetchTodos`의 내부에 복사 붙여넣기해서 `receiveTodos`와 같은 것을 할 수 있다. `Promsie.then` 메소드에 두번째 인자로 거부 핸들러를 추가 할 것 이다.
+`requestTodos` 액션은 `fetchTodos` 외부에서 전혀 사용되지 않기 때문에, 그 안에 `requestTodos` 객체 리터럴을 그 안에 내장 시킬 수 있다. `receiveTodos`가 발행된 곳에서 `fetchTodos`의 내부에 복사 붙여넣기해서 `requestTodos`와 같은 것을 할 수 있다. `Promsie.then` 메소드에 두번째 인자로 거부 핸들러를 추가 할 것 이다.
 
 #### Inside `fetchTodos`
 ```javascript
@@ -29,12 +29,11 @@ return api.fetchTodos(filter).then(
 
 `fetchTodos` 액션 생성자가 몇개의 액션들을 발행 하기 때문에, 좀 더 일관되게 이름을 바꿀 것 이다:
   * `'REQUEST_TODOS'`는 `'FETCH_TODOS_REQUEST'`로, todo들을 요청 한다는 의미로
-  * `'RECEIVE_TODOS'` 는 `'FETCH_TODOS_SUCCESS'`로, todo들을 성공적으로 가조 왔다는 의미로
+  * `'RECEIVE_TODOS'` 는 `'FETCH_TODOS_SUCCESS'`로, todo들을 성공적으로 가져 왔다는 의미로
   * `error` 핸들러 `'FETCH_TODOS_FAILURE'` 추가, todo들을 가져오는데 실패 했을 때 사용하기 위해
 
-Our `error` handler will also be passed two additional pieces of data: the `filter` and the `message` that can be read with `error.message` if specified. We will use `'Something went wrong.'` as a fallback.
 
-`error` 핸들러는 데이터의 두개의 추가적인 조각을 전달 받을 것 이다: `filter`와 만일 특정 지어 졌다면 `error.messsage` 로 일혀 지는 `message`. 기본 값으로 `'Something went wrong'`을 사용할 것 이다.
+`error` 핸들러는 데이터의 두개의 추가적인 데이터를 전달 받을 것 이다: `filter`와 만일 특정 지어 졌다면 `error.messsage` 로 읽혀 지는 `message`. 기본 값으로 `'Something went wrong'`을 사용할 것 이다.
 
 #### 수정된 `fetchTodos` `return`
 ```javascript
@@ -55,8 +54,6 @@ return api.fetchTodos(filter).then(
   }
 );
 ```
-
-Now our `fetchTodos` action creator handles all the cases, and we can remove the old action creators that are now inlined (`requestTodos` and `receiveTodos`).
 
 새로운 `fetchTodos` 액션 생성자는 모든 경우를 핸들링 하고, 이제 inlined된 오래된 액션 생성자들을 제거 할 수 있다 (`requestTodos`와 `receiveTodos`).
 
@@ -99,7 +96,7 @@ const isFetching = (state = false, action) => {
 
 `React`를 `import`한 후, 문자열 `message` 와 함수 `onRetry` 두개의 인자를 가지는 새로운 함수형 상태 없는 컴포넌트 `FetchError`를 만든다. 이 컴포넌트는 이 파일의 기본 export 가 될 것 이다.
 
-랜더된 `<div>`는 무언가 안좋은 일이 벌어졌다는 에러와(props에 전달된 메세지를 포함하는), 클릭 했을 때 `onRetry` 컬백 prop을 실행시키켜서 사용자가 데이터를 다시 가져오게 할 수 있는 버튼을 포함 할 것 이다.
+`<div>`는 무언가 안좋은 일이 벌어졌다는 에러와(props에 전달된 메세지를 포함하는), 클릭 했을 때 `onRetry` 컬백 prop을 실행시키켜서 사용자가 데이터를 다시 가져오게 할 수 있는 버튼을 포함 할 것 이다.
 
 ##### `FetchError` Component
 ```javascript
@@ -113,9 +110,9 @@ const FetchError = ({ message, onRetry }) => (
 
 ### `VisibleTodoList`에 `FetchError` 추가 하기
 
-`VisibleTodoList`에 `import FetchError`가 필요하고 나서, `render` 메소드를 업데이트 한다.
+`VisibleTodoList`에 `import FetchError`를 추가하고, `render` 메소드를 업데이트 한다.
 
-에러 메세지를 받기 위해, `VisibleTodoList` 컴포넌트의 `props`로 부터 재구조화 할 필요가 있다.
+에러 메세지를 받기 위해, `VisibleTodoList` 컴포넌트의 `props`에 추가 할 필요가 있다.
 
 ```javascript
 // Inside VisibleTodoList
@@ -126,7 +123,7 @@ render() {
 
 `render`의 내부에 "만일 prop에 에러 메세지가 있으면, 표시할 todo가 없다"라고 말해줄 다른 상태를 추가 할 것 이고, `FetchError` 컴포넌트를 반환 할 것 이다.
 
-`FetchError` 컴포넌트 자체는 `message` prop을 원하는데, 방금 재구조화 한 `errorMessage` prop을 전달 받을 것 이다. `onRetry` 컬백 prop을 제공 받을 것인데, 이 컬백은 데이터를 가져오는 과정을 다시 시작하기 위해 `this.fetchData`를 호출 하는 에러 함수를 전달 할 것 이다.
+`FetchError` 컴포넌트 자체는 `message` prop을 원하는데, 방금 추가 한 `errorMessage` prop을 전달 받을 것 이다. `onRetry` 컬백 prop을 제공 받을 것인데, 이 컬백은 데이터를 가져오는 과정을 다시 시작하기 위해 `this.fetchData`를 호출 하는 에러 함수를 전달 할 것 이다.
 
 ```javascript
 // Inside VisibleTodoList's `render()`
@@ -210,6 +207,6 @@ const errorMessage = (state = null, action) => {
 ```
 
 ### API 수정
-배번 에러를 던지는 API 대신, "retry" 버튼을 실행해 볼수 있게 랜덤하게 던지는 것을 할 수도 있다.
+매번 에러를 던지는 API 대신, "Retry" 버튼을 실행해 볼수 있게 랜덤하게 에러를 던지지도록 수정 할 수도 있다.
 
 [Demonstration and recap at 6:43 in video](https://egghead.io/lessons/javascript-redux-displaying-error-messages)
