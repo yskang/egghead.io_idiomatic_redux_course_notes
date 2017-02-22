@@ -1,36 +1,35 @@
-# Building React Applications with Idiomatic Redux (Egghead.io)
+# Building React Applications with Idiomatic Redux (Egghead.io) [한국어판]
 
 ![](https://s3.amazonaws.com/f.cl.ly/items/212E0u153X2A18131808/Image%202016-07-10%20at%2012.00.28%20PM.png?v=feaddbc8)
 
-This repo contains notes from [Dan Abramov's](https://github.com/gaearon) second [Redux course](https://egghead.io/courses/building-react-applications-with-idiomatic-redux) on Egghead.io.
+이 저장소는 Egghead.io에 있는 [Dan Abramov의](https://github.com/gaearon) 두번째 [Redux 강좌](https://egghead.io/courses/building-react-applications-with-idiomatic-redux)에 있는 노트를 모아 놓은 곳 이다.
 
-## 01\. Simplifying the Arrow Functions
-See how ES6 features can be used to clean up arrow functions even more. [Video](https://egghead.io/lessons/javascript-redux-simplifying-the-arrow-functions)
-
-
-## 02. Supplying the Initial State
-We will learn how to start a Redux app with a previously persisted state, and how it merges with the initial state specified by the reducers. [Video](https://egghead.io/lessons/javascript-redux-supplying-the-initial-state)
+## 01\. Arrow 함수를 이용해 단순화 하기
+ES6 에서 제공하는 특성을 이용해 arrow 함수가 어떻게 더 깔끔해 지는지 볼 수 있다. [Video](https://egghead.io/lessons/javascript-redux-simplifying-the-arrow-functions)
 
 
-## 03. Persisting the State to the Local Storage
-We will learn how to use store.subscribe() to efficiently persist some of the app’s state to localStorage and restore it after a refresh. [Video](https://egghead.io/lessons/javascript-redux-persisting-the-state-to-the-local-storage#/tab-transcript)
+## 02. 초기 상태 제공하기
+이전에 저장된 상태로 Redux앱을 시작하는 방법을 배울 것 이다. [Video](https://egghead.io/lessons/javascript-redux-supplying-the-initial-state)
 
 
-## 04. Refactoring the Entry Point
-We will learn how to better separate the code in the entry point to prepare it for adding the router.
-[Video](https://egghead.io/lessons/javascript-redux-refactoring-the-entry-point?series=building-react-applications-with-idiomatic-redux#/tab-transcript)
+## 03. 내부 저장소에 상태 저장 해 놓기
+store.subscribe()를 이용해 앱의 몇가지 상태를 효율적으로 내부 저장소에 저장하고 리프레시 후에 복구 하는 방법을 배울 것 이다. [Video](https://egghead.io/lessons/javascript-redux-persisting-the-state-to-the-local-storage#/tab-transcript)
 
 
-## 05. Adding React Router to the project
-We will learn how to add React Router to a Redux project and make it render our root component. [Video](https://egghead.io/lessons/javascript-redux-adding-react-router-to-the-project?series=building-react-applications-with-idiomatic-redux#/tab-transcript)
+## 04. 진입점 리펙토링
+라우터를 추가 하기 위해 진입점에 있는 코드를 어떻게 더 잘 분리 하는지 배울 것 이다. [Video](https://egghead.io/lessons/javascript-redux-refactoring-the-entry-point?series=building-react-applications-with-idiomatic-redux#/tab-transcript)
 
 
-## 06. Navigating with React Router `<Link>`
-We will learn how to change the address bar using a component from React Router.
+## 05. React Router를 프로젝트에 추가 하기
+Redux 프로젝트에 React Router를 추가 하고 root 컴포넌트를 랜더 하는 방법을 배울 것 이다. [Video](https://egghead.io/lessons/javascript-redux-adding-react-router-to-the-project?series=building-react-applications-with-idiomatic-redux#/tab-transcript)
+
+
+## 06. React Router `<Link>`를 사용해 이동하기
+React Router에서 제공하는 컴포넌트를 이용해 주소창을 변경하는 방법을 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-navigating-with-react-router-link?series=building-react-applications-with-idiomatic-redux)
 
 
-## 07. Filtering Redux State with React Router Params
+## 07. React Router Params로 Redux 상태 필터링 하기
 We will learn how adding React Router shifts the balance of responsibilities, and how the components can use both at the same time.
 [Video](https://egghead.io/lessons/javascript-redux-filtering-redux-state-with-react-router-params)
 

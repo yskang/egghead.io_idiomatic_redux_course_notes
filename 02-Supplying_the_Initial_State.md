@@ -1,4 +1,4 @@
-# 02\. Supplying the Initial State
+# 02\. 초기 상태 제공
 
 [비디오 링크](https://egghead.io/lessons/javascript-redux-supplying-the-initial-state)
 

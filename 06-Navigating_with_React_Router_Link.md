@@ -1,4 +1,4 @@
-# 06. 리액트 라우터 사용해서 이동하기 `<Link>`
+# 06. 리액트 라우터 `<Link>`를 사용해서 이동하기 `<Link>`
 [비디오 링크](https://egghead.io/lessons/javascript-redux-navigating-with-react-router-link?series=building-react-applications-with-idiomatic-redux)
 
 이번 강좌에서는 visiblility 필터를 컨트롤하는 "links"를 업데이트 해서 _진짜_ 링크처럼 동작하도록 할 것이다. 브라우저의 "뒤로가기" 버튼이 동작하게 하고 필터를 번경할 때 URL이 변하도록 할 것 이다.
