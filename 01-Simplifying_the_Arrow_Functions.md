@@ -28,9 +28,9 @@ export function addTodo(text) {
 
 하지만, 만일 arrow 함수를 사용하기를 좋아 한다면, 좀 더 함축적이 될 것이다.
 
-위에 arrow 함수를 사용한 것을 보면, 괄호로 시작되고 끝나고 괄호 안에 `return` 문을 포함하는 함수를 볼 수 있다. return 문은 함수안에 있는 모든 것 이기 때문에 그 자체를 arrow 함수의 몸체로 사용할 수 있다.
+위에 arrow 함수를 사용한 것을 보면, 시작과 끝이 중괄호로 되어 있고 그 안에 `return` 문을 포함하는 함수를 볼 수 있다. 함수안에는 return문 밖에 없기 때문에 그 자체를 arrow 함수의 몸체로 사용할 수 있다.
 
-object 표현식을 사용해서, block 을 제거 할 수 있다.
+객체 표현식을 사용해서, block 을 제거 할 수 있다.
 ```javascript
 export const addTodo = (text) => ({
   type:'ADD_TODO',
@@ -41,9 +41,9 @@ export const addTodo = (text) => ({
 
 *노트:* 괄호로 표현식을 감싸서, 파서가 블럭이 아닌 표현식으로 알게 하는 것이 중요하다.
 
-이런 단계들은 단지 object를 반환하기만 하는 함수들에 대해 반복 가능하다; 단지 `return` 문을 제거하고, 몸체를 표현식으로 바꾸면 된다.
+이런 단계들은 단지 객체를 반환하기만 하는 함수들에 대해 반복 가능하다; 단지 `return` 문을 제거하고, 몸체를 표현식으로 바꾸면 된다.
 
-이 단계들은 액션 생성자들에도 역시 적용될 수 있다. 예를 들어, `mapStateToProps` 와 `mapDispatchToProps` 는 단지 object를 반환 하기만 하는 것이 일반적이다.
+이 단계들은 액션 생성자들에도 역시 적용될 수 있다. 예를 들어, `mapStateToProps` 와 `mapDispatchToProps` 는 일반적으로 객체 반환만 한다.
 ##### 이전:
 ```javascript
 const mapStateToProps = (state, ownProps) => {
