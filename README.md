@@ -30,98 +30,98 @@ React Router에서 제공하는 컴포넌트를 이용해 주소창을 변경하
 
 
 ## 07. React Router Params로 Redux 상태 필터링 하기
-We will learn how adding React Router shifts the balance of responsibilities, and how the components can use both at the same time.
+React Router를 추가 해서 책임의 균형을 이동 시키고, 컴포넌트들이 어떻게 동시에 둘을 사용하는지 배우게 될 것이다.
 [Video](https://egghead.io/lessons/javascript-redux-filtering-redux-state-with-react-router-params)
 
 
-## 08. Using `withRouter()` to Inject the Params into Connected Components
-We will learn how to use `withRouter()` to inject params provided by React Router into connected components deep in the tree without passing them down all the way down as props.
+## 08. `withRouter()`를 사용해서 연결된 컴포넌트들에 Params를 주입하기
+React Router에서 제공하는 `withRouter()`를 사용해서 prop으로 모든 경로에 있는 컴포넌트들에 전달하지 않고, 트리 깊이 있는 연결된 컴포넌트들에 params를 주입하는 방법을 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-using-withrouter-to-inject-the-params-into-connected-components)
 
 
-## 09. Using `mapDispatchToProps()` Shorthand Notation
-We will learn how to avoid the boilerplate code in `mapDispatchToProps()` for the common case where action creator arguments match the callback prop arguments.
+## 09. `mapDispatchToProps()` 간결한 형식 사용하기
+액션 생성자가 인자가 컬백 prop 인자와 일치 하는 일반적인 경우 `mapDispatchToProps()`에 있는 보일러플레이트 코드를 피하는 방법을 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-using-mapdispatchtoprops-shorthand-notation)
 
 
-## 10. Colocating Selectors with reducers
-We will learn how to encapsulate the knowledge about the state shape in the reducer files, so that the components don’t have to rely on it.
+## 10. Selector와 리듀서 같은 곳에 놓기
+리듀서 파일에 있는 상태 모습에 관한 내용을 숨겨서, 컴포넌트들이 의존할 필요 없게 하는 방법을 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-colocating-selectors-with-reducers?series=building-react-applications-with-idiomatic-redux#/tab-transcript)
 
 
-## 11. Normalizing the State Shape
-We will learn how to normalize the state shape to ensure data consistency that is important in real-world applications.
+## 11. 상태 모습 정규화
+실제 어플리케이션에서 중요한 데이터 일관성을 보장하기 위해 상태 모습을 정규화하는 방법을 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-normalizing-the-state-shape)
 
 
-## 12. Wrapping `dispatch()` to Log Actions
-We will learn how centralized updates in Redux let us log every state change to the console along with the action that caused it.
+## 12. 액션들을 로그로 기록하기 위해 `dispatch()`를 감싸기
+액션에 따른 변경 사항을 콘솔에 로그로 기록할 수 있게 해주는 Redux에서 제공하는 중앙 갱신 방법을 배울 것 이다. 
 [Video](https://egghead.io/lessons/javascript-redux-wrapping-dispatch-to-log-actions)
 
 
-## 13. Adding a Fake Backend to the Project
-We will learn about fake backend module that we will be using throughout the next lessons to simulate data fetching.
+## 13. 프로젝트에 가짜 백앤드 추가 하기
+데이터 가져오기를 시뮬레이트 할 수 있는 다음 강좌에서 사용되는 백앤드 모듈에 관해 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-adding-a-fake-backend-to-the-project)
 
 
-## 14. Fetching Data on Route Change
-We will learn how to fire up an async request when the route changes.
+## 14. 경로 변경에 따라서 데이터 가져오기 
+경로 변경시 비동기 요청을 하는 방법을 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-fetching-data-on-route-change)
 
 
-## 15. Dispatching Actions with the Fetched Data
-We will learn how to dispatch a Redux action after the data has been fetched and recap how to do it when the route changes.
+## 15. 데이터를 가져오는 액션 발행하기
+데이터를 가져온 후 Redux 액션을 발행하는 방법과 경로가 변경 됐을 때 동작하는 방법을 되풀이하는 것을 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-dispatching-actions-with-the-fetched-data?series=building-react-applications-with-idiomatic-redux)
 
 
-## 16. Wrapping `dispatch()` to Recognize Promises
-We will learn how to teach `dispatch()` to recognize Promises so that we can move the async logic out of the components into asynchronous action creators.
+## 16. Promise들을 인식 하게 만들기 위해 `dispath()` 감싸기
+`dispatch()`가 Promise를 인식하게 하게 해서 액션 생성자에 비동기적으로 컴포넌트들의 비동기 로직을 옮길 수 있게 하는 방법을 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-wrapping-dispatch-to-recognize-promises)
 
 
-## 17. The Middleware chain
-We will learn how we can generalize wrapping `dispatch()` for different purposes into a concept called “middleware” that is widely available in the Redux ecosystem.
+## 17. 미들웨어 체인
+서로 다른 목적을 위해 `dispatch()`를 일반적으로 감싸서 Redux 에코시스템에 널리 사용가능한 "미들웨어"라고 불리는 컨벱으로 만드는 방법을 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-the-middleware-chain)
 
 
-## 18. Applying Redux Middleware
-We will learn how to replace the middleware we wrote and the custom code we used to glue it together with the existing core and third party utilities.
+## 18. Redux 미들웨어 적용하기
+작성한 미들웨어를 대체 해서 기존 코어와 서드파티 유틸리티를 함께 붙여서 사용할수 있는 방법을 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-applying-redux-middleware)
 
 
-## 19. Updating the State with the Fetched Data
-We will learn how moving the source of truth for the data to the server changes the state shape and the reducers in our app.
+## 19. 가져온 데이터로 상태 갱신 하기
+데이터의 저장소를 서버로 이동 하는 것이 앱의 상태 모양과 리듀서를 어떻게 변경 하는 지 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-updating-the-state-with-the-fetched-data)
 
-## 20. Refactoring the reducers
-We will learn how to remove the duplication in our reducer files and how to keep the knowledge about the state shape colocated with the newly extracted reducers.
+## 20. 리듀서들 리팩토링 하기
+어떻게 리듀서 파일들에 있는 중복을 제거 하고, 새롭게 추출된 리듀서와 같이 있는 상태 모습에 관한 내용을 유지 하는지 배울 것 이다. 
 [Video](https://egghead.io/lessons/javascript-redux-refactoring-the-reducers)
 
 
-## 21. Displaying Loading Indicators
-We will learn how to display the loading indicators while the data is being fetched.
+## 21. 로딩 인디케이터 표시 하기
+데이터를 가져오는 동안 로딩 인디테이터를 표시하는 방법을 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-displaying-loading-indicators)
 
-## 22. Dispatching Actions Asynchronously with Thunks
-We will learn about “thunks”—the most common way to write async action creators in Redux.
+## 22. Thunk를 이용해 액션을 비동기적으로 발행하기
+Redux에서 가장 일반적으로 비동기 액션을 생성하는 "thunk"에 대해 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-dispatching-actions-asynchronously-with-thunks)
 
-## 23. Avoiding Race Conditions with Thunks
-We will learn how Redux Thunk middleware lets us conditionally dispatch actions to avoid unnecessary network requests and potential race conditions.
+## 23. Thunk 사용중 경합 상황 피하기
+어떻게 Redux 미들웨어가 불필요한 네트웍 요청을 피하고 경합 상황이 생길 가능성을 배제 하도록 액션을 조건적으로 발행 할 수 있게 하는지 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-avoiding-race-conditions-with-thunks)
 
-## 24. Displaying Error Messages
-We will learn how to handle an error inside an async action, display its message in the user interface, and offer user an opportunity to retry the action.
+## 24. 에러 메세지 표시하기
+비동기 액션의 에러를 다루고, UI에 표시하고, 사용자에게 다시 시도할 기회를 주는 방법을 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-displaying-error-messages)
 
-## 25. Creating Data on the Server
-We will learn how to wait until the item is created on the server, and update the corresponding local state.
+## 25. 서버에 데이터 생성하기
+아이템이 서버에 생성되서, 지역 상태에 맞게 갱신되기 까지 기다리는 방법을 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-creating-data-on-the-server)
 
-## 26. Normalizing API Responses with `normalizr`
-We will learn how to use normalizr to convert all API responses to a normalized format so that we can simplify the reducers.
+## 26. `normalizr`로 API 응답 정규화 하기
+모든 API 응답을 정규화된 형식으로 변경해서 리듀서를 단순하게 만드는 방법을 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-normalizing-api-responses-with-normalizr)
 
-## 27. Updating Data on the Server
-We will learn how to wait until the item is updated on the server, and then update the corresponding local state.
+## 27. 서버에서 데이터 갱신하기
+서버에 있는 아이템이 갱신되고나서, 지역 상태에 맞게 갱신되는 것을 기다리는 방법을 배울 것 이다.
 [Video](https://egghead.io/lessons/javascript-redux-updating-data-on-the-server)
