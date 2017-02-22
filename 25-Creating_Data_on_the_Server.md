@@ -1,11 +1,11 @@
-# 25. Creating Data on the Server
-[Video Link](https://egghead.io/lessons/javascript-redux-creating-data-on-the-server)
+# 25. 서버에 데이터 생성하기
+[비디오 링크](https://egghead.io/lessons/javascript-redux-creating-data-on-the-server)
 
-### Updating the Fake API
+### Fake API 갱신
 
-Some new functions were added to our fake API client for the next few lessons.
+다음 몇개의 강의를 통해 몇가지 새로운 기능들이 fake API에 추가 될 것이다.
 
-The first new fake API endpoint is called `addTodo`. It simulates a network connection, and then it creates a new `todo` object. It puts the todo with the given text into the fake database, and it returns the `todo` object, just like REST endpoints normally do.
+첫번째 새로운 fake API endpoint는 `addTodo`이다. 이 것은 네트웍 연결을 시뮬레이트 하고, 새로운 `todo` 객체를 생성한다. REST endpoint들이 일반적으로 동작 하듯이 fake database로 주어진 텍스트로된 todo를 집어 넣고, `todo`객체를 반환 한다.
 
 #### `addTodo` Endpoint
 ```javascript
@@ -21,7 +21,7 @@ export const addTodo = (text) =>
   });
 ```
 
-The second fake API endpoint I is called `toggleTodo`. It also simulates a network connection, and it finds the corresponding todo in the fake database and flips its `completed` field, also returning the `todo` as the response.
+두번째 fake API endpoint는 `toggleTodo`다. 역시 네트웍 연결을 시뮬레이트 하고, fake database에서 적절한 todo를 찾아서, `completed` 필드 값을 뒤집은 후, 역시 결과로 `todo`를 반환한다.
 
 #### `toggleTodo` Endpoint
 ```javascript
@@ -33,17 +33,17 @@ export const toggleTodo = (id) =>
   });
 ```
 
-### Updating the "Add Todo" Process
+### "Add Todo" 과정 갱신
 
-In this lesson, we will make the add todo button called the `addTodo` fake API endpoint.
+이 강좌에서, `addTodo` fake API endpoint 라고 하는 add todo 버튼을 만들 것 이다.
 
-Inside our action creators file, we will no longer need the `v4` function from `node-uuid` because the id generation will now occur on the server.
+id 생성은 이제 서버에서 이루어 지기 때문에, 액션 생성자 파일에 있는 `node-uuid`에서 가져온 `v4` 함수는 더이상 필요하지 않다.
 
-The `addTodo` action creator will be changed to be a thunk action creator, so we will add `dispatch` as a curried argument. The thunk will call the API's `addTodo` endpoint with the given text, and wait for the response to come back.
+`addTodo` 액션 생성자는 액션 생성 thunk로 변경 될 것 이기 때문에, 커링 인자로 `dispatch`를 추가 할 것 이다. thunk는 주어진 텍스트를 가지고 API의 `addTodo` endpoint를 호출하고, 응답이 오기를 기다릴 것 이다.
 
-When the response is available, it will dispatch an action with the type `'ADD_TODO_SUCCESS'`, and the server response.
+응답이 오면, `'ADD_TODO_SUCCESS'` 타입과 서버 응답을 포함한 액션을 발행 할 것이다.
 
-##### Updated `addTodo` Action
+##### 갱신된 `addTodo` 액션
 ```javascript
 export const addTodo = (text) => (dispatch) =>
   api.addTodo(text).then(response => {
@@ -54,11 +54,11 @@ export const addTodo = (text) => (dispatch) =>
   });
 ```
 
-#### Updating the `byId` Reducer
+#### `byId` 리듀서 갱신하기
 
-Since the newly added todo will be part of the server response, we need to change the `byId` reducer to merge the todo into the lookup table that it manages.
+새롭게 추가된 todo는 서버 응답의 일부가 될 것이기 때문에, `byId` 리듀서를 관리하는 lookup 테이블에 todo를 합치도록 변경 하야 한다.
 
-I am adding a new case for the `'ADD_TODO_SUCCESS'` action. We'll use the object spread operator to create a new version of the lookup table, where under the action response ID key, there is a new todo object that I read from action response.
+`'ADD_TODO_SUCCESS'` 액션을 위한 새로운 case를 추가 할 것이다. 객체 전개 연산자를 lookup table의 새 버젼을 생성하는데 사용 할 것이다. 액션 응답 ID 키 아래에, 액션 응답으로 부터 읽은 새로운 todo 객체가 있다.
 
 ```javascript
 // Inside reducers/byId.js
@@ -81,19 +81,20 @@ const byId = (state = {}, action) => {
 };
 ```
 
-However, we have not updated the list by filter, so all still only has three IDs in the list. If I go to another tab, the new todo appears because its ID is now included in the list of fetched IDs, and similarly, if I go back to the previous tab, it appears now because the data has been re-fetched.
+하지만, 필터에 의해 리스트가 갱신 되지 않기 때문에, 리스트에는 오직 세개의 ID들만이 있을 것 이다. 만일 다른 텝으로 간다면, 새로운 todo가 보일 것인데 이유는 ID가 이제 가져온 ID들의 리스트에 포함되어 있기 때문이고, 비슷하게, 만일 이전 텝으로 돌아 간다면, 데이터를 다시 가져왔기 때문에 이전 todo들이 보일 것 이다.
 
-#### Updating `createList`
+#### `createList` 갱신
 
-Since the list of IDs for each tab is managed by a reducer defined inside `createlist.js`, we need to update our `ids` reducer to handle the `'ADD_TODO_SUCCESS'` action.
+각각 텝을 위한 ID들의 리스트가 `createlist.js`에 정의되어 있는 리듀서에 의해 관리되고 있기 때문에, `'ADD_TODO_SUCCESS'` 액션을 다루는 `ids` 리듀서를 갱신 해야 한다.
 
-When we receive a confirmation that the todo has been added on the server, we can return a new list of IDs with existing IDs in the beginning, and a newly added ID at the end.
+todo가 서버에 추가 되었다는 확인을 받았을 때, 처음부터 있었던 ID들을 가지고 만든 리스트의 제일 끝에 새로운 ID를 추가한 새로운 ID 리스트를 반환 할 수 있다.
 
-Unlike the other actions, `'ADD_TODO_SUCCESS'` does not have a `filter` property on the `action` object, our current `if (filter !== action.filter)` check inside of `ids` would fail. Because of this, we will replace the existing check with different checks in different cases.
+다른 액션들과 다르게, `'ADD_TODO_SUCCESS'`는 `action` 객체에 `filter` property를 가지고 있지 않아서, 현재 `ids`안에 있는 검사하는 `if (filter !== action.filter)` 문장은 실패 할 것 이다. 이것 때문에, 기존 검사하는 로직을 각각 다른 검사 로직으로 바꿀 것 이다.
 
 For `FETCH_TODOS_SUCCESS`, we want to replace the fetched IDs if the filter in the action matches the filter of this list.
+`FETCH_TODOS_SUCCESS`의 경우, 만일 액션에 있는 필터가 리스트의 필터와 일치 한다면 가져온 IDs을 대체 할 것 이다.
 
-However, for `ADD_TODO_SUCCESS`, we want the newly added todo to appear in every list except the completed filter, because a newly added todo is not completed.
+하지만, `ADD_TODO_SUCCESS` 의 경우, 완료 필터를 제외하고 모든 리스트에 있는 새롭게 추가된 todo들이 나타나게 해야 하는데, 왜냐하면 새롭게 추가된 todo들은 완료 되지 않았기 때문이다.
 
 ```javascript
 const createList = (filter) => {
