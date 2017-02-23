@@ -1,28 +1,28 @@
-# 26. Normalizing API Responses with `normalizer`
-[Video Link](https://egghead.io/lessons/javascript-redux-normalizing-api-responses-with-normalizr)
+# 26. `normalizer`로 API 응답 정규화 하기
+[비디오 링크](https://egghead.io/lessons/javascript-redux-normalizing-api-responses-with-normalizr)
 
-The `byId` reducer currently has to handle server actions differently, because they have different response shapes.
+현재 `byId` 리듀서는 서버 액션을 서로 다르게 다루고 있는데, 이유는 응답의 모양이 서로 다르기 때문이다.
 
-For example, the `'FETCH_TODOS_SUCCESS'` action's response is an array of todos. This array has be to iterated over and merged one at a time into the next state.
+예를 들어, `'FETCH_TODOS_SUCCESS'` 액션의 응답은 todo들의 배열이다. 이 배열은 반복해서 한번에 하나씩 다음 상태로 합쳐져야 한다.
 
-The response for `'ADD_TODO_SUCCESS'` is the single todo that has just been added, and this single todo has to be merged in a different way.
+`'ADD_TODO_SUCCESS'`를 위한 응답은 방금 추가된 한개의 todo이고, 이 todo는 서로 다른 방법으로 합쳐져야 한다.
 
-Instead of adding new cases for every new API call, I want to normalize the responses so the response shape is always the same.
+모든 새로은 API 호출을 추가 하는 대신, 응답의 모양이 항상 같도록 응답을 정규화 하려고 한다.
 
-### Installing `normalizr`
+### `normalizr` 설치 하기
 
-`normalizr` is a utility library that will help us normalize API responses to have the same shape.
+`normalizr`는 API 응답을 같은 모양이 되도록 정겨호 ㅏ하는데 도움을 주는 유틸리티 라이브러리다.
 
 `$ npm install --save normalizr`
 
-###  Creating `schema.js`
-We'll create a new file `schema.js` inside of our `actions` directory.
+###  `schema.js` 생성하기
+`actions` 폴더에 새로운 파일 `schema.js`를 생성 할 것 이다.
 
-We'll start by importing a `Schema` constructor and a function called `arrayOf` from `normalizr`.
+`Schema` 생성자를 import 하고, `normalizr`로 부터 `arrayOf` 함수를 import 할 것 이다.
 
-Our first exported Schema will be for the `todo` objects, and we'll specify `todos` as the name of the dictionary in the normalized response.
+첫번 째로 export 되는 Schema는 `todo` 객체가 될 것이고, `todos`를 정규화된 응답에 있는 사전의 이름으로 지정 할 것 이다.
 
-Our next schema called `arrayOfTodos` corresponds to the responses that contain arrays of `todo` objects.
+다음 schema는 `arrayOfTodos`로서 `todo` 객체의 배열을 가지고 있는 응답에 해당 될 것 이다.
 
 ```javascript
 import { Schema, arrayOf } from 'normalizr'
@@ -31,11 +31,11 @@ export const todo = new Schema('todos');
 export const arrayOfTodos = arrayOf(todo);
 ```
 
-### Updating our Action Creators
+### Action 생성자 갱신하기
 
-Inside of `actions/index.js`, we'll add a named import for a function called `normalize` that we import from `normalizr`. We also add a namespace import for all the Schemas we defined in the schema file.
+`actions/index.js` 에, `normalizr`로 부터 `normalize`라는 함수를 import 해서 추가 할 것 이다. 또한 schema 파일에 정의한 모든 Schema를 위한 namespace를 추가 한다.
 
-Inside of the `FETCH_TODOS_SUCCESS` callback, we'll add a "normalized response" log so that I can see what the normalized response looks like. We call the `normalize` function with the original `response` as the first argument, and the corresponding schema (in this case, `arrayOfTodos`) as the second argument.
+`FETCH_TODOS_SUCCESS` 컬백 내부에, `normalized response` 로그를 추가 해서 정규화된 응답이 어떻게 보이는지 볼 수 있게 할 것 이다. 첫번째 인자로 원래 `response`를 넣고, 두번째 인자로 이에 따른 schema(이경우, `arrayOfTodos`)를 넣어서 `normalize` 함수를 호출한다.
 
 ```javascript
 return api.fetchTodos(filter).then(
@@ -52,7 +52,7 @@ return api.fetchTodos(filter).then(
   },
 ```
 
-We'll update `addTodo` in a similar manner:
+`addTodo`도 비슷한 방법으로 수정한다.
 ```javascript
 export const addTodo = (text) => (dispatch) =>
   api.addTodo(text).then(response => {
@@ -67,20 +67,20 @@ export const addTodo = (text) => (dispatch) =>
   });
 ```
 
-### Comparing Responses
+### 응답 비교하기
 
-At this point, the response in the action is an array of to-do objects, but our normalized response for `'FETCH_TODOS_SUCCESS'` is an object that contains two fields: `entities` and `result`.
+이 시점에서, 액션에서 응답은 to-do 객체들의 배열이지만, `'FETCH_TODOS_SUCCESS'`에 대한 정규화된 응답은 다음 두개의 필드를 가지는 객체이다: `entities`와 `result`
 
-`entities` contains a normalized dictionary called `todos` that contains every `todo` in the response by its id. `normalizr` found these `todo` objects in the response by following the `arrayOfTodos` schema. Conveniently, they are indexed by IDs, so they will be easy to merge into the lookup table.
+`entities`는 그 id에 의한 응답에 있는 모든 `todo`를 포함한 `todos`라는 정규화된 사전을 가진다. `normalizr`는 뒤따르는 `arrayOfTodos` schema에 의한 응답에서 이런 `todo` 객체들을 찾는다. 편리하게도, ID들로 인텍싱 되어 있어서, lookpu 테이블에 쉽게 합쳐질 수 있을 것 이다.
 
-The second field is the `result`, which is an array of `todo` IDs. They are in the same order as the `todos` in the original response array. However, `normalizr` replaced each `todo` with its ID, and moved every todo into the `todos` dictionary.
+두번째 필드는 `result`인데, `todo` ID들의 배열이다. 원래 응답 배열에 있는 `todos`와 같은 순서로 되어 있다. 하지만, `normalizr`는 각각 `todo`를 그것의 ID로 대체 하고, 모든 todo를 `todos` 사전으로 이동 시킨다. 
 
 
-### Finishing our Action Creator Updates
+### 액션 생성자 마무리 수정
 
-We will now change the action creators so that they pass the normalized response in the response field, instead of the original response.
+액션 생성자를 변경해서 응답 필드에 원래 응답 대신 정규화된 응답을 전달 한다.
 
-##### Before:
+##### 이전:
 ```javascript
 return api.fetchTodos(filter).then(
   response => {
@@ -96,7 +96,7 @@ return api.fetchTodos(filter).then(
   },
 ```
 
-##### After:
+##### 이후:
 ```javascript
 return api.fetchTodos(filter).then(
     dispatch({
@@ -107,11 +107,11 @@ return api.fetchTodos(filter).then(
   },
 ```
 
-### Updating the Reducers
+### 리듀서 수정하기
 
-We can delete the special cases in our `byId` reducer, because the response shape has been normalized. Instead of switching by action type, we will check to see if the action has a response object on it.
+`byId` 리듀서에 있는 특별한 case를 삭제 할 수 있는데, 이유는 응답의 모양이 정규화 도었기 때문이다. 액션 종류에 의해 스위칭 되는 대신, 액션이 그에 대한 응답 객채를 가지고 있는지 확인 할 것 이다.
 
-##### `byId` Reducer Before:
+##### `byId` 리듀서 이전:
 ```javascript
 const byId = (state = {}, action) => {
   switch (action.type) {
@@ -132,9 +132,9 @@ const byId = (state = {}, action) => {
 };
 ```
 
-We will return a new version of the lookup table that contains all existing entries, as well as any entries inside `entities.todos` in the normalized response. For other actions, I will return the lookup table as it is.
+정규화된 응답에 있는 `entities.todos`의 내부에 어떤 요소도 포함된, 현재 있는 모든 요소들을 가지고 있는 새로운 lookup 테이블 버젼을 반환 할 것 이다. 다른 액션에 대해선, 있는 그대로 lookup 테이블을 반환 할 것 이다.
 
-##### `byId` Reducer After:
+##### `byId` 리듀서 이후:
 ```javascript
 const byId = (state = {}, action) => {
   if (action.response) {
@@ -147,9 +147,9 @@ const byId = (state = {}, action) => {
 };
 ```
 
-Now we need to update the `ids` reducer inside of `createList.js` for our new `action.response` shape.
+이제 새로운 `action.response` 모습을 위해 `createList.js`의 내부에 있는 `ids` 리듀서를 업데이트 해야 한다.
 
-##### `ids` Reducer Before:
+##### `ids` 리듀서 이전:
 ```javascript
 const ids = (state = [], action) => {
     switch (action.type) {
@@ -167,9 +167,9 @@ const ids = (state = [], action) => {
   };
 ```
 
-Now, the action response has a `result` field, which is either an array of `id`s (in the case of `'FETCH_TODOS_SUCCESS'`), or a single `id` of the fetched todo (in the case of `'ADD_TODO_SUCCESS'`).
+이제, 액션 응답은 `result` 필드를 가지며, 이 필드는 `id`들의 배열(이경우 `'FETCH_TODOS_SUCCESS'`), 혹은 가져온 todo(이 경우 `'ADD_TODO_SUCCESS'`)의 단일 `id` 이다.
 
-##### `ids` Reducer After
+##### `ids` 리듀서 이후
 ```javascript
 const ids = (state = [], action) => {
    switch (action.type) {
