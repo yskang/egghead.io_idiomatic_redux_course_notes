@@ -1,11 +1,12 @@
-# 27. Updating Data on the Server
-[Video Link](https://egghead.io/lessons/javascript-redux-updating-data-on-the-server)
+# 27. 서버에 있는 데이터 갱신 하기
 
-We'll start by changing the `toggleTodo` action creator to be a thunk action creator, so we add `dispatch` as a curried argument. Next, we'll call the `toggleTodo` API endpoint, and wait for the response to come back.
+[비디오 링크](https://egghead.io/lessons/javascript-redux-updating-data-on-the-server)
 
-When the response is available, we will dispatch an action with the type `'TOGGLE_TODO_SUCCESS', and the response. We'll use `normalize` again by passing the original `response` as the first argument, and the todo schema as the second argument.
+`toggleTodo` 액션 생성자를 thunk 액션 생성자가 되도록 변경해서, 커링 인자로 `dispatch`를 추가 하는 것 부터 시작 할 것 이다. 다음으로, `toggleTodo` API endpoint를 호출 하고, 응답이 오기를 기다릴 것 이ㅏㄷ.
 
-##### Updated `toggleTodo` Action Creator
+응답이 가능하면, `'TOGGLE_TODO_SUCCESS'` 형 액션을 발행 하고, 응답 할 것 이다. 첫번째 인자로 원래 `response`를 전달하고, 두번째 인자로 todo schema를 전달해서 `normalize`를 다시 사용할 것 이다.
+
+##### 갱신된 `toggleTodo` 액션 생성자
 ```javascript
 export const toggleTodo = (id) => (dispatch) =>
   api.toggleTodo(id).then(response => {
@@ -16,11 +17,11 @@ export const toggleTodo = (id) => (dispatch) =>
   });
 ```
 
-### Updating the `ids` Reducer
+### `ids` 리듀서 갱신하기
 
-Inside of `createList.js` we will add a new case for the `'TOGGLE_TODO_SUCCESS'` action.
+`createList.js` 에 `'TOGGLE_TODO_SUCCESS'` 액션을 위한 새로운 case를 추가 할 것 이다.
 
-We'll extract the code for this case into a separate function called `handleToggle`, and pass in the `state` and the `action`.
+이 case를 위해 코드를 함수로 추출해서 `handleToggle`로 하고, `state`와 `action`을 넘길 것 이다.
 
 ```javascript
 // Inside the `ids` reducer
@@ -28,15 +29,15 @@ We'll extract the code for this case into a separate function called `handleTogg
     return handleToggle(state, action);
 ```
 
-We'll put our `handleToggle` function above the `ids` reducer. It accepts the `state` (an array of ids) and the `'TOGGLE_TODO_SUCCESS'` action.
+`ids` 리듀서 위에 `handleToggle` 함수를 놓을 것 이다. `state`(id들의 배열)와 `'TOGGLE_TODO_SUCCESS'`액션을 받는다.
 
-We will destructure the `result` as the `toggledId` and the `entities` from the normalized response. Next, we will read the `completed` value from the `todo`, which I get by referencing `entities.todos` by the `toggledId`.
+`toggledId`로 값을 설정한 `result`와 정규화된 응답으로 부터 가져온 `entities`로 응답을 구조화 한다. 다음으로, `toggleId`에 의해 참조된 `entities.todos`에서 구한 `todo`로 부터 `completed` 값을 읽을 것 이다.
 
-There are two cases in which we want to remove the todo from the list:
- * The `completed` field is `true` but the `filter` is `active`
- * `completed` is `false` but the `filter` is `completed`
+리스트에서 지우고 싶은 todo에는 두가지가 있다:
+ * `completed` 필드가 `true` 지만 `filter`는 `active`
+ * `completed` 는 `false` 지만 `filter`는 `completed` 
 
-When `shouldRemove` is `true`, we want to return a copy of the list that does not contain the id of the todo that was just toggled. We accomplish this by filtering the list by id and only leave the ones that have a different id. Otherwise, we return the original array.
+`shouldRemove`가 `true`일 때, 방금 토글된 todo의 id를 포함하지 않은 리스트의 복사본을 반환 하고 싶다. 리스트를 id로 필터링을 해서 다른 id를 가진 것은 남겨 둠으로서 완료 한다. 그렇지 않으면 원래 배열을 반환 한다.
 
 ##### Completed `handleToggle` Function
 ```javascript
